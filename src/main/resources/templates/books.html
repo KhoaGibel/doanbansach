@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Danh Sách Sách</title>
@@ -41,6 +41,13 @@
             </span>
         </div>
     </div>
+    <div class="action-bar" style="display: flex; justify-content: flex-end; gap: 15px; margin: 15px 0;">
+        <a th:href="@{/books/new}" sec:authorize="hasRole('ADMIN')" class="btn btn-primary">Thêm Sách Mới</a>
+
+        <a th:href="@{/cart}" class="btn btn-secondary">
+            Giỏ hàng (<span th:text="${#lists.size(cartItems)}">0</span>)
+        </a>
+    </div>
 
     <table th:if="${books != null && !#lists.isEmpty(books)}">
         <thead>
@@ -67,9 +74,11 @@
                             ? book.description.substring(0,50) + '...'
                             : book.description}"></td>
             <td class="actions">
-                <a th:href="@{'/books/edit/' + ${book.id}}">Sửa</a> |
-                <a th:href="@{'/books/delete/' + ${book.id}}"
-                   th:onClick="return confirm('Bạn có chắc muốn xóa sách này?')">Xóa</a> |
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{'/books/edit/' + ${book.id}}">Sửa</a> |
+                    <a th:href="@{'/books/delete/' + ${book.id}}"
+                       th:onClick="return confirm('Bạn có chắc muốn xóa sách này?')">Xóa</a> |
+                </span>
                 <a th:href="@{'/add-to-cart/' + ${book.id}}"
                    th:onClick="return confirm('Thêm vào giỏ hàng?')">Thêm vào giỏ</a>
             </td>
@@ -79,7 +88,7 @@
 
     <div th:if="${books == null || #lists.isEmpty(books)}" style="text-align: center; color: #666; margin: 30px 0;">
         <p>Không có sách nào để hiển thị.</p>
-        <a th:href="@{/books/new}" style="color: #007bff;">Thêm sách mới</a>
+        <a th:href="@{/books/new}" style="color: #007bff;" sec:authorize="hasRole('ADMIN')">Thêm sách mới</a>
     </div>
 
 </div>

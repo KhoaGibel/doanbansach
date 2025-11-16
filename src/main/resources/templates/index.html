@@ -4,24 +4,29 @@
     <meta charset="UTF-8">
     <title>VanlangBooks Store - Trang Chủ</title>
 
-    <link rel="stylesheet" th:href="@{/css/index.css}"> <link rel="stylesheet" th:href="@{/css/headerandfooter.css}"> <link rel="stylesheet" th:href="@{/css/bestseller.css}"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" th:href="@{/css/bestseller.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+
 <div th:replace="~{fragments/header :: header-nav}"></div>
+
+<div class="container">
 
     <div class="quick-categories" th:if="${!#lists.isEmpty(categories)}">
         <h3>Khám phá theo danh mục</h3>
         <div class="category-links">
-                <span th:each="cat : ${categories}">
-                    <a th:href="@{'/category/' + ${cat.id}}">
-                        <span th:text="${cat.name}">Văn học</span>
-                        <span class="count" th:text="${categoryCounts[cat.id] ?: 0}">0</span>
-                    </a>
-                </span>
+            <span th:each="cat : ${categories}">
+                <a th:href="@{'/category/' + ${cat.id}}">
+                    <span th:text="${cat.name}">Văn học</span>
+                    <span class="count" th:text="${categoryCounts[cat.id] ?: 0}">0</span>
+                </a>
+            </span>
         </div>
     </div>
-
-    <section class="bestseller-section">
+    <section id="popular-books-section" class="bestseller-section">
         <h2 class="bestseller-title">SÁCH BÁN CHẠY (Popular)</h2>
         <div class="product-list" id="product-list-popular">
             <div th:if="${#lists.isEmpty(popularBooks)}">
@@ -38,7 +43,8 @@
             </div>
         </div>
     </section>
-    <section class="bestseller-section" style="margin-top: 40px;">
+
+    <section id="newest-books-section" class="bestseller-section" style="margin-top: 40px;">
         <h2 class="bestseller-title">SÁCH MỚI NHẤT (Newest)</h2>
         <div class="product-list" id="product-list-newest">
             <div th:if="${#lists.isEmpty(newestBooks)}">
@@ -61,7 +67,6 @@
     </div>
 
 </div>
-
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

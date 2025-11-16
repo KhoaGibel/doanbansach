@@ -3,17 +3,17 @@
 <body>
 
 <header th:fragment="header-nav">
-    <div class="Logo" style="margin-left: 20px;">
-        <a th:href="@{/}" style="text-decoration: none; color: inherit;">
-            <h1 style="margin-right: 20px;">VanlangBooks</h1>
+    <div class="logo-container">
+        <a th:href="@{/}" class="logo-link">
+            <h1 class="logo-text">VanlangBooks</h1>
         </a>
     </div>
 
     <nav>
         <ul>
             <li><a th:href="@{/books}">Shop</a></li>
-            <li><a th:href="@{/classic}">Sách Mới Nhất</a></li>
-            <li><a th:href="@{/crush}">Sách Bán chạy</a></li>
+            <li><a th:href="@{/#newest-books-section}">Sách Mới Nhất</a></li>
+            <li><a th:href="@{/#popular-books-section}">Sách Bán chạy</a></li>
             <li><a th:href="@{/contact}">Contact</a></li>
             <li><a th:href="@{/aboutus}">About US</a></li>
         </ul>
@@ -30,7 +30,7 @@
 
         <a th:href="@{/login}" sec:authorize="!isAuthenticated()"><i class="fa fa-user"></i></a>
 
-        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="display: inline; margin: 0; padding: 0;">
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" class="logout-form">
             <button type="submit" class="logout-button">
                 <i class="fa fa-sign-out-alt"></i>
             </button>
