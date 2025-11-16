@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+h1 {
+    color: #1a1a1a; /* Sửa thành màu đen */
+    text-align: center;
+}
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    flex-grow: 1;
+}
+
+/* Thông báo (giữ nguyên) */
+.alert {
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Menu lọc */
+.nav-menu {
+    margin: 20px 0;
+    padding: 10px;
+    background: #f4f4f4; /* Sửa thành xám nhạt */
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+.nav-menu a {
+    color: #333; /* Sửa thành xám đậm */
+    text-decoration: none;
+    font-weight: 500;
+}
+.nav-menu a:hover {
+    text-decoration: underline;
+}
+.nav-menu .active {
+    font-weight: bold;
+    color: #000000; /* Sửa thành đen */
+}
+.category-count {
+    font-size: 0.9em;
+    color: #666; /* Sửa thành xám */
+}
+
+/* Bảng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background: #343a40; /* Sửa thành nền đen/xám đậm */
+    color: white;
+}
+tr:hover {
+    background: #f8f8f8; /* Sửa thành xám nhạt hơn */
+}
+.actions a {
+    margin-right: 10px;
+    color: #000000; /* Sửa thành đen */
+    text-decoration: none;
+    font-weight: bold;
+}
+.actions a:hover {
+    text-decoration: underline;
+}
+
+/* Link chân trang */
+.footer-links {
+    margin-top: 20px;
+    text-align: center;
+}
+.footer-links a {
+    margin: 0 10px;
+    color: #000000; /* Sửa thành đen */
+    text-decoration: none;
+}
