@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{login.title}">Đăng nhập</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-box">
+        <h2 th:text="#{login.header}">Login</h2>
+
+        <form th:action="@{/login}" method="POST">
+            <input type="text" name="username" placeholder="Tên đăng nhập" required />
+            <input type="password" name="password" placeholder="Mật khẩu" required />
+
+            <div class="forgot-password">
+                <a th:href="@{/forgot-password}">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" th:text="#{login.button}">Đăng nhập</button>
+        </form>
+
+        <p class="switch">
+            <span th:text="#{login.noAccount}">Chưa có tài khoản?</span>
+            <a th:href="@{/register}">Đăng kí</a>
+        </p>
+
+    </div>
+</div>
+
+</body>
+</html>

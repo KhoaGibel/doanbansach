@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kết Quả Tìm Kiếm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/searchresult.css}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Kết Quả Tìm Kiếm</h1>
+    <div class="search-term" th:text="'Từ khóa: ' + ${keyword}">Từ khóa: ...</div>
+
+    <div th:if="${message}" class="no-results" th:text="${message}">
+        Không tìm thấy sách nào phù hợp.
+    </div>
+
+    <table th:if="${books != null && !#lists.isEmpty(books)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tiêu Đề</th>
+            <th>Tác Giả</th>
+            <th>Giá</th>
+            <th>Mô Tả</th>
+            <th>Hành Động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}"
+            th:data-id="${book.id}">
+            <td data-label="ID" th:text="${book.id}">1</td>
+            <td data-label="Tiêu Đề" th:text="${book.title}">Lập trình Java</td>
+            <td data-label="Tác Giả" th:text="${book.author}">Nguyễn Văn A</td>
+            <td data-label="Giá" class="price"
+                th:text="${#numbers.formatDecimal(book.price, 0, 0, '###,###')} + ' ₫'">150,000 ₫</td>
+            <td data-label="Mô Tả" class="description"
+                th:text="${book.description != null and book.description.length() > 100}
+                            ? ${book.description.substring(0,100)} + '...'
+                            : ${book.description}">Mô tả ngắn...</td>
+            <td data-label="Hành Động" class="actions">
+                <a th:href="@{'/books/edit/' + ${book.id}}">Sửa</a> |
+                <a th:href="@{'/books/delete/' + ${book.id}}"
+                   th:onclick="'return confirm(\'Xóa sách ID ' + ${book.id} + '?\');'">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${books == null or #lists.isEmpty(books)}" class="no-results">
+        Không có kết quả nào để hiển thị.
+    </div>
+
+    <div class="back-links">
+        <a th:href="@{/books}">Quay Lại Danh Sách Sách</a> |
+        <a th:href="@{/}">Trang Chủ</a>
+    </div>
+</div>
+
+</body>
+</html>

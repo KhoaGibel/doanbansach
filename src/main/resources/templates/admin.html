@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Quản Trị</title>
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .admin-container { max-width: 1100px; margin: 20px auto; padding: 20px; }
+        .admin-links a {
+            display: block; margin: 15px 0; padding: 12px;
+            background: #f4f4f4; text-decoration: none;
+            color: #333; font-weight: bold; border-radius: 5px;
+        }
+        .admin-links a:hover { background: #e0e0e0; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header-nav}"></div>
+
+<main class="admin-container">
+    <h1>Chào mừng Admin!</h1>
+    <p>Đây là trang Dashboard quản trị.</p>
+
+    <div class="admin-links">
+        <a th:href="@{/admin/orders}">Quản lý Đơn hàng</a>
+        <a th:href="@{/categories}">Quản lý Danh mục</a>
+        <a th:href="@{/admin/users}">Quản lý Người dùng (Chưa tạo)</a>
+        <a th:href="@{/admin/statistics}">Xem Thống kê (Chưa tạo)</a>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

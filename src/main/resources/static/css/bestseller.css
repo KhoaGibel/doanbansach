@@ -1,0 +1,99 @@
+.bestseller-section {
+  padding: 40px 60px;
+  background-color: #fff;
+}
+
+.bestseller-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.product-item {
+  position: relative;
+  flex: 0 0 calc(25% - 15px);
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+.product-item:hover {
+  transform: scale(1.03);
+}
+
+.product-item img {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.product-item h4 {
+  font-size: 18px;
+  margin: 10px 0 5px;
+  color: #000;
+}
+
+.product-item p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.product-item .price {
+  font-weight: bold;
+  color: #000;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #aaa;
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: crimson;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  line-height: 1.4;
+}
+
+.badge span {
+  display: block;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.bestseller-section .product-item a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.bestseller-section .product-item a:hover h4 {
+  color: #ff6600;
+}
+
+#admin-section {
+  display: none; /* Ẩn phần Admin Section */
+}

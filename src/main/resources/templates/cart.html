@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - Vanlangbooks</title>
+
+    <link rel="stylesheet" th:href="@{/css/cart.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header-nav}"></div>
+
+<main class="cart-container">
+    <h2>Giỏ hàng của bạn</h2>
+
+    <div th:if="${#lists.isEmpty(cartItems)}" class="cart-empty">
+        <p>Giỏ hàng của bạn đang trống.</p>
+    </div>
+
+    <div id="cart-items" class="cart-items" th:unless="${#lists.isEmpty(cartItems)}">
+
+        <div th:each="item : ${cartItems}" class="cart-item">
+            <img th:src="@{/asset/img/products/{imgName}(imgName=${item.book.image})}"
+                 th:alt="${item.book.title}"
+                 onerror="this.src='/images/default-book.png';">
+
+            <h4 th:text="${item.book.title}">Tên sách</h4>
+            <p>Giá: <span th:text="${item.book.price} + ' VNĐ'"></span></p>
+            <p>Số lượng: <span th:text="${item.quantity}"></span></p>
+
+            <a th:href="@{/remove-from-cart/{id}(id=${item.book.id})}" class="btn-remove">Xóa</a>
+        </div>
+    </div>
+
+    <div class="cart-summary">
+        <p>Tổng cộng: <span id="cart-total" th:text="${total} + ' VNĐ'">0đ</span></p>
+
+        <a id="checkout-btn" class="btn" th:href="@{/checkout}">Thanh toán</a>
+        <a id="continue-shopping-btn" class="btn" th:href="@{/books}">Tiếp tục mua sắm</a>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/scripts/cart.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Quản Lý Danh Mục</title></head>
+<body>
+<h1>Quản Lý Danh Mục Sách</h1>
+<div th:if="${success}" style="color:green;" th:text="${success}"></div>
+<div th:if="${error}" style="color:red;" th:text="${error}"></div>
+
+<table border="1">
+    <tr><th>ID</th><th>Tên Danh Mục</th><th>Mô Tả</th><th>Hành Động</th></tr>
+    <tr th:each="cat : ${categories}">
+        <td th:text="${cat.id}"></td>
+        <td><a th:href="@{'/categories/' + ${cat.id}}">[[${cat.name}]]</a></td>
+        <td th:text="${cat.description ?: 'Không có'}"></td>
+        <td>
+            <a th:href="@{'/categories/edit/' + ${cat.id}}">Sửa</a> |
+            <a th:href="@{'/categories/delete/' + ${cat.id}}"
+               onclick="return confirm('Xóa danh mục này?')">Xóa</a>
+        </td>
+    </tr>
+</table>
+<br>
+<a th:href="@{/categories/new}">Thêm danh mục mới</a> | <a th:href="@{/books}">Quay lại sách</a>
+</body>
+</html>

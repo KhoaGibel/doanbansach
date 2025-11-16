@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Sách</title>
+
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}" />
+    <link rel="stylesheet" th:href="@{/css/books.css}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header-nav}"></div>
+
+<div class="container">
+    <h1>Danh Sách Sách</h1>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="nav-menu">
+        <div>
+            <strong>Lọc theo:</strong>
+            <a th:href="@{/books}"
+               th:classappend="${currentFilter == null ? 'active' : ''}">Tất cả</a> |
+            <a th:href="@{/books(filter='newest')}"
+               th:classappend="${currentFilter == 'newest' ? 'active' : ''}">Sách mới nhất</a> |
+            <a th:href="@{/books(filter='popular')}"
+               th:classappend="${currentFilter == 'popular' ? 'active' : ''}">Phổ biến nhất</a>
+        </div>
+
+        <div style="margin-left: 30px;">
+            <strong>Danh mục:</strong>
+            <span th:each="cat, iter : ${categories}">
+                <a th:href="@{'/category/' + ${cat.id}}"
+                   th:text="${cat.name} + ' (' + ${categoryCounts != null ? (categoryCounts[cat.id] ?: 0) : 0} + ')'"
+                   th:classappend="${category != null && category.id == cat.id ? 'active' : ''}"
+                   class="category-count"></a>
+                <span th:unless="${iter.last}"> | </span>
+            </span>
+        </div>
+    </div>
+
+    <table th:if="${books != null && !#lists.isEmpty(books)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tiêu Đề</th>
+            <th>Tác Giả</th>
+            <th>Giá</th>
+            <th>Danh Mục</th>
+            <th>Mô Tả</th>
+            <th>Hành Động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}"></td>
+            <td>
+                <a th:href="@{'/books/detail/' + ${book.id}}" th:text="${book.title}"></a>
+            </td>
+            <td th:text="${book.author}"></td>
+            <td th:text="${#numbers.formatCurrency(book.price)}"></td>
+            <td th:text="${book.category?.name} ?: 'Chưa có'"></td>
+            <td th:text="${book.description != null && book.description.length() > 50
+                            ? book.description.substring(0,50) + '...'
+                            : book.description}"></td>
+            <td class="actions">
+                <a th:href="@{'/books/edit/' + ${book.id}}">Sửa</a> |
+                <a th:href="@{'/books/delete/' + ${book.id}}"
+                   th:onClick="return confirm('Bạn có chắc muốn xóa sách này?')">Xóa</a> |
+                <a th:href="@{'/add-to-cart/' + ${book.id}}"
+                   th:onClick="return confirm('Thêm vào giỏ hàng?')">Thêm vào giỏ</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${books == null || #lists.isEmpty(books)}" style="text-align: center; color: #666; margin: 30px 0;">
+        <p>Không có sách nào để hiển thị.</p>
+        <a th:href="@{/books/new}" style="color: #007bff;">Thêm sách mới</a>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const success = /*[[${success}]]*/ null;
+    const error = /*[[${error}]]*/ null;
+    if (success) {
+        setTimeout(() => alert(success), 100);
+    }
+    if (error) {
+        setTimeout(() => alert(error), 100);
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

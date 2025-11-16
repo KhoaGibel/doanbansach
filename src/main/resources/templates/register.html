@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="#{register.title}">VanlangBooks - Đăng ký tài khoản</title>
+
+    <link rel="stylesheet" th:href="@{/css/register.css}" />
+</head>
+<body>
+<div class="register-container">
+    <div class="register-box">
+        <h2 th:text="#{register.header}">Register</h2>
+
+        <form th:action="@{/register}" th:object="${user}" method="POST">
+
+            <input type="text" th:field="*{fullName}" placeholder="Họ và tên" required />
+
+            <input type="text" th:field="*{username}" placeholder="Tài khoản đăng nhập" required />
+            <input type="email" th:field="*{email}" placeholder="Email" required />
+
+            <input type="password" th:field="*{password}" placeholder="Mật khẩu" required />
+
+            <input type="password" th:field="*{confirmPassword}" placeholder="Xác nhận mật khẩu" required />
+
+            <div th:if="${passwordError}" class="alert-danger" style="color: red; font-size: 0.9em; margin-bottom: 10px;">
+                <p th:text="${passwordError}">Lỗi: Mật khẩu không trùng lặp.</p>
+            </div>
+
+            <div th:if="${error}" class="alert-danger" style="color: red; font-size: 0.9em; margin-bottom: 10px;">
+                <p th:text="${error}">Lỗi đăng ký.</p>
+            </div>
+
+
+            <button type="submit" th:text="#{register.button}">Đăng ký</button>
+        </form>
+
+        <p class="switch">
+            <span th:text="#{register.haveAccount}">Đã có tài khoản?</span>
+            <a th:href="@{/login}">Đăng nhập</a>
+        </p>
+
+    </div>
+</div>
+</body>
+</html>

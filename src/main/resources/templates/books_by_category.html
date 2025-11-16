@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${pageTitle} ?: 'Danh sách sách'"></title>
+</head>
+<body>
+<h1 th:text="'Danh mục: ' + ${category.name}"></h1>
+<p th:text="${category.description}" th:unless="${category.description == null || category.description.isEmpty()}"></p>
+
+<div th:if="${books.isEmpty()}">Không có sách nào trong danh mục này.</div>
+
+<table border="1" th:if="${!books.isEmpty()}">
+    <tr><th>ID</th><th>Tiêu Đề</th><th>Tác Giả</th><th>Giá</th><th>Hành Động</th></tr>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}"></td>
+        <td><a th:href="@{/books/detail/{id}(id=${book.id})}" th:text="${book.title}"></a></td>
+        <td th:text="${book.author}"></td>
+        <td th:text="${book.price} + ' VND'"></td>
+        <td>
+            <a th:href="@{/add-to-cart/{id}(id=${book.id})}">Thêm vào giỏ</a>
+        </td>
+    </tr>
+</table>
+
+<br>
+<a th:href="@{/books}">Quay lại danh sách</a> |
+<a th:href="@{/categories}">Quản lý danh mục</a>
+</body>
+</html>

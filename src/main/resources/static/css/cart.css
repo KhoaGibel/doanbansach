@@ -1,0 +1,63 @@
+/* CSS cho trang giỏ hàng */
+.cart-container {
+width: 80%;
+margin: 20px auto;
+}
+
+.cart-items {
+border-collapse: collapse;
+width: 100%;
+}
+
+.cart-item {
+display: flex;
+align-items: center;
+border-bottom: 1px solid #ddd;
+padding: 10px 0;
+}
+
+.cart-item img {
+width: 100px;
+height: auto;
+margin-right: 20px;
+}
+
+.item-info {
+flex: 1;
+}
+
+.quantity-controls {
+display: flex;
+align-items: center;
+}
+
+.quantity-controls button {
+background-color: #f0f0f0;
+border: 1px solid #ccc;
+padding: 5px 10px;
+cursor: pointer;
+}
+
+.quantity-controls input {
+width: 40px;
+text-align: center;
+margin: 0 5px;
+}
+
+.cart-summary {
+text-align: right;
+margin-top: 20px;
+}
+
+.cart-summary .btn {
+background-color: #4CAF50;
+color: white;
+padding: 10px 20px;
+border: none;
+cursor: pointer;
+margin-left: 10px;
+}
+
+.cart-summary .btn:hover {
+background-color: #45a049;
+}

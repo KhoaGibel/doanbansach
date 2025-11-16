@@ -1,0 +1,148 @@
+/* Header */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding: 10px 30px;
+  border-bottom: 1px solid #ccc;
+  flex-wrap: wrap;
+}
+
+.Logo h1 {
+  font-size: 28px;
+  color: black;
+  margin: 0;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav ul li {
+  margin: 0 15px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-icons a i {
+  color: black;
+  font-size: 20px;
+}
+
+.search-box-container {
+  position: relative;
+}
+
+.search-box-container i {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  color: gray;
+}
+
+.search-box {
+  padding: 6px 6px 6px 30px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+/* Footer */
+footer {
+  background-color: #000;
+  color: white;
+  padding: 40px 20px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer-container .footer-col,
+.footer-container .footer-col2,
+.footer-container .footer-column {
+  flex: 1 1 300px;
+  margin: 10px;
+}
+
+.footer-container h3 {
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.footer-container p,
+.footer-container span {
+  color: #ffffff;
+}
+
+.social-icons a {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.social-icons img {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.social-icons a:hover span {
+  color: white;
+}
+
+/* CSS MỚI CHO NÚT ĐĂNG XUẤT (DÙNG LOGO ẢNH) */
+.logout-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle; /* Giữ cho nó thẳng hàng */
+    line-height: 1;
+}
+
+/* Định dạng kích thước cho logo */
+.logout-logo {
+    width: 24px;  /* Chỉnh kích thước logo theo ý bạn */
+    height: 24px; /* Chỉnh kích thước logo theo ý bạn */
+    display: block;
+    transition: opacity 0.3s;
+}
+
+.logout-button:hover .logout-logo {
+    opacity: 0.7; /* Hiệu ứng mờ khi di chuột */
+}
+.logout-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    /* Đảm bảo icon có màu đen và kích thước khớp với các icon khác */
+    color: #000000;
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+.logout-button:hover {
+    color: #555; /* Màu xám khi di chuột */
+}

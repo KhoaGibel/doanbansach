@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<header th:fragment="header-nav">
+    <div class="Logo" style="margin-left: 20px;">
+        <a th:href="@{/}" style="text-decoration: none; color: inherit;">
+            <h1 style="margin-right: 20px;">VanlangBooks</h1>
+        </a>
+    </div>
+
+    <nav>
+        <ul>
+            <li><a th:href="@{/books}">Shop</a></li>
+            <li><a th:href="@{/classic}">Sách Mới Nhất</a></li>
+            <li><a th:href="@{/crush}">Sách Bán chạy</a></li>
+            <li><a th:href="@{/contact}">Contact</a></li>
+            <li><a th:href="@{/aboutus}">About US</a></li>
+        </ul>
+    </nav>
+
+    <div class="header-icons">
+        <form th:action="@{/search}" method="get" class="search-box-container">
+            <i class="fa fa-search"></i>
+            <input type="text" name="keyword" class="search-box" placeholder="Tìm kiếm..." required>
+            <button type="submit" style="display: none;"></button>
+        </form>
+
+        <a th:href="@{/cart}"><i class="fa fa-shopping-cart"></i></a>
+
+        <a th:href="@{/login}" sec:authorize="!isAuthenticated()"><i class="fa fa-user"></i></a>
+
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="display: inline; margin: 0; padding: 0;">
+            <button type="submit" class="logout-button">
+                <i class="fa fa-sign-out-alt"></i>
+            </button>
+        </form>
+    </div>
+</header>
+
+</body>
+</html>
