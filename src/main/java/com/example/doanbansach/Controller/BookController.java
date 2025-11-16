@@ -12,9 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -53,6 +55,18 @@ public class BookController {
         return "index";
     }
 
+    @GetMapping("/admin/products")
+    public String showAdminProductsPage(Model model) {
+        model.addAttribute("allBooks", bookService.getAllBooks());
+        model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
+
+        if (!model.containsAttribute("book")) {
+            model.addAttribute("book", new Book());
+        }
+
+        return "admin-products";
+    }
+
     @GetMapping("/books")
     public String viewBooksList(@RequestParam(required = false) String filter, Model model) {
         try {
@@ -89,24 +103,20 @@ public class BookController {
         }
     }
 
-    @GetMapping("/books/new")
-    public String showNewBookForm(Model model) {
-        model.addAttribute("book", new Book());
-        model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-        return "new_book";
-    }
-
     @PostMapping("/books")
     public String saveBook(
             @Valid @ModelAttribute("book") Book book,
             BindingResult bindingResult,
             @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam("imageFile") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "new_book";
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.book", bindingResult);
+            redirectAttributes.addFlashAttribute("book", book);
+            redirectAttributes.addFlashAttribute("error", "Lỗi: Vui lòng kiểm tra lại thông tin sách.");
+            return "redirect:/admin/products";
         }
 
         try {
@@ -116,14 +126,14 @@ public class BookController {
                 book.setCategory(category);
             }
 
-            bookService.addBook(book);
+            bookService.addBook(book, imageFile);
             redirectAttributes.addFlashAttribute("success", "Thêm sách thành công!");
-            return "redirect:/books";
+            return "redirect:/admin/products";
         } catch (Exception e) {
-            model.addAttribute("error", "Lỗi lưu sách: " + e.getMessage());
-            model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
+            redirectAttributes.addFlashAttribute("error", "Lỗi lưu sách: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("book", book);
             e.printStackTrace();
-            return "new_book";
+            return "redirect:/admin/products";
         }
     }
 
@@ -134,10 +144,10 @@ public class BookController {
                     .orElseThrow(() -> new IllegalArgumentException("ID sách không tồn tại: " + id));
             model.addAttribute("book", book);
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "edit_book";
+            return "admin/edit_book";
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
-            return "redirect:/books";
+            return "redirect:/admin/products";
         }
     }
 
@@ -147,12 +157,13 @@ public class BookController {
             @Valid @ModelAttribute("book") Book bookDetails,
             BindingResult bindingResult,
             @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam("imageFile") MultipartFile imageFile, // THÊM THAM SỐ NÀY
             Model model,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "edit_book";
+            return "admin/edit_book";
         }
 
         try {
@@ -172,27 +183,30 @@ public class BookController {
                 existingBook.setCategory(null);
             }
 
-            bookService.updateBook(id, existingBook);
+            bookService.updateBook(id, existingBook, imageFile); // CẬP NHẬT LỆNH GỌI
             redirectAttributes.addFlashAttribute("success", "Cập nhật sách thành công!");
-            return "redirect:/books";
+            return "redirect:/admin/products";
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi cập nhật sách: " + e.getMessage());
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
             e.printStackTrace();
-            return "edit_book";
+            return "admin/edit_book";
         }
     }
 
     @GetMapping("/books/delete/{id}")
-    public String deleteBook(@PathVariable Long id, RedirectAttributes ra) {
+    public String deleteBook(@PathVariable Long id, RedirectAttributes ra) throws IOException {
         try {
             bookService.deleteBook(id);
             ra.addFlashAttribute("success", "Xóa sách thành công!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Lỗi xóa sách: " + e.getMessage());
         }
-        return "redirect:/books";
+        return "redirect:/admin/products";
     }
+
+    // ... (Giữ nguyên các phương thức còn lại)
+    // ...
 
     @GetMapping("/books/detail/{id}")
     public String viewBookDetail(@PathVariable Long id, Model model, RedirectAttributes ra) {
@@ -353,7 +367,6 @@ public class BookController {
         return "order_success";
     }
 
-    // ĐÃ THÊM: Phương thức cho trang About Us
     @GetMapping("/aboutus")
     public String showAboutUsPage() {
         return "aboutus";

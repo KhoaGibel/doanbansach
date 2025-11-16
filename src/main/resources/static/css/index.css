@@ -1,4 +1,3 @@
-/* Reset & base */
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +5,6 @@
     font-family: Arial, sans-serif;
   }
 
-/* QUAN TRỌNG: Thiết lập Body làm Flex Container */
 body {
     margin: 0;
     padding: 0;
@@ -117,3 +115,42 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s;
+    text-align: center;
+}
+.product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+/* Bổ sung các style con bị thiếu */
+.product-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.product-item .price {
+    color: #1a1a1a;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Nút Hành động */
+.action-buttons {
+    text-align: center;
+    margin: 40px 0 20px 0;
+}
+.action-buttons a {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 25px;
+    background: #343a40;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+.action-buttons a:hover {
+    background: #495057;
+}

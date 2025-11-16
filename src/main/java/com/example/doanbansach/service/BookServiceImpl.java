@@ -1,26 +1,37 @@
 package com.example.doanbansach.service;
 
 import com.example.doanbansach.Entity.Book;
-import com.example.doanbansach.Repository.BookRepository; // Đã sửa lỗi 'R' -> 'r'
+import com.example.doanbansach.Repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class BookServiceImpl implements BookService { // Sửa: Thêm "implements BookService"
+public class BookServiceImpl implements BookService {
 
     @Autowired
     private BookRepository bookRepository;
 
-    @Override // Thêm @Override
+    @Value("${app.upload.dir}")
+    private String uploadDir;
+
+    @Override
     public List<Book> getAllBooks() {
         return safeList(bookRepository.findAll());
     }
 
-    @Override // Thêm @Override
+    @Override
     public Optional<Book> getBookById(Long id) {
         if (id == null) return Optional.empty();
         try {
@@ -31,53 +42,83 @@ public class BookServiceImpl implements BookService { // Sửa: Thêm "implement
         }
     }
 
-    @Override // Thêm @Override
+    @Override
     @Transactional
-    public Book addBook(Book book) {
-        return saveSafely(book, "Lỗi lưu sách");
+    public void addBook(Book book, MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+            Path copyLocation = Paths.get(uploadDir + fileName);
+
+            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+            book.setImage(fileName); // SỬA LỖI: setImagePath -> setImage
+        } else if (book.getImage() == null || book.getImage().isEmpty()) {
+            book.setImage("default-book.png");
+        }
+        saveSafely(book, "Lỗi lưu sách");
     }
 
-    @Override // Thêm @Override
+    @Override
     @Transactional
-    public Book updateBook(Long id, Book bookDetails) {
+    public void updateBook(Long id, Book bookDetails, MultipartFile file) throws IOException {
         if (id == null || bookDetails == null) {
             throw new IllegalArgumentException("ID hoặc dữ liệu sách không hợp lệ");
         }
 
-        Book book = getBookById(id)
+        Book existingBook = getBookById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ID sách không tồn tại: " + id));
 
-        book.setTitle(bookDetails.getTitle());
-        book.setAuthor(bookDetails.getAuthor());
-        book.setPrice(bookDetails.getPrice());
-        book.setDescription(bookDetails.getDescription());
-        book.setCategory(bookDetails.getCategory());
+        existingBook.setTitle(bookDetails.getTitle());
+        existingBook.setAuthor(bookDetails.getAuthor());
+        existingBook.setPrice(bookDetails.getPrice());
+        existingBook.setDescription(bookDetails.getDescription());
+        existingBook.setCategory(bookDetails.getCategory());
 
-        return saveSafely(book, "Lỗi cập nhật sách");
+        if (!file.isEmpty()) {
+            // Logic xóa ảnh cũ
+            if (existingBook.getImage() != null && !existingBook.getImage().equals("default-book.png")) { // SỬA LỖI: getImagePath -> getImage
+                Path oldImagePath = Paths.get(uploadDir + existingBook.getImage());
+                Files.deleteIfExists(oldImagePath);
+            }
+
+            // Logic lưu ảnh mới
+            String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+            Path copyLocation = Paths.get(uploadDir + fileName);
+            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+            existingBook.setImage(fileName); // SỬA LỖI: setImagePath -> setImage
+        }
+
+        saveSafely(existingBook, "Lỗi cập nhật sách");
     }
 
-    @Override // Thêm @Override
+    @Override
     @Transactional
-    public void deleteBook(Long id) {
+    public void deleteBook(Long id) throws IOException {
         if (id == null) throw new IllegalArgumentException("ID không được null");
-        try {
+
+        Optional<Book> bookOptional = getBookById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            // Xóa file vật lý trước
+            if (book.getImage() != null && !book.getImage().equals("default-book.png")) { // SỬA LỖI: getImage/getImagePath
+                Path imagePath = Paths.get(uploadDir + book.getImage());
+                Files.deleteIfExists(imagePath);
+            }
             bookRepository.deleteById(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Lỗi xóa sách: " + e.getMessage());
+        } else {
+            throw new IllegalArgumentException("Sách không tồn tại với ID: " + id);
         }
     }
 
-    @Override // Thêm @Override
+    @Override
     public List<Book> searchBooks(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAllBooks();
         }
-        // Giả sử Repository có phương thức này
-        return safeList(bookRepository.findByTitleContainingIgnoreCase(keyword));
+        // SỬA LỖI: findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase
+        return safeList(bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword));
     }
 
-    @Override // Thêm @Override
+    @Override
     public List<Book> getBooksByCategory(Long categoryId) {
         if (categoryId == null || categoryId <= 0) {
             return getAllBooks();
@@ -85,34 +126,33 @@ public class BookServiceImpl implements BookService { // Sửa: Thêm "implement
         return safeList(bookRepository.findByCategoryId(categoryId));
     }
 
-    @Override // Thêm @Override
+    @Override
     public List<Book> getNewestBooks() {
-        // Giả sử Repository có phương thức này
-        return bookRepository.findTop5ByOrderByCreatedAtDesc().stream()
+        // SỬA LỖI: findTop5 -> findTop8 (theo lỗi bạn báo)
+        return bookRepository.findTop8ByOrderByCreatedAtDesc().stream()
                 .limit(10)
                 .collect(Collectors.toList());
     }
 
-    @Override // Thêm @Override
+    @Override
     public List<Book> getTopPopularBooks() {
-        // Giả sử Repository có phương thức này
-        return bookRepository.findTop5ByOrderByPopularCountDesc().stream()
+        // SỬA LỖI: findTop5 -> findTop8 (theo lỗi bạn báo)
+        return bookRepository.findTop8ByOrderByPopularCountDesc().stream()
                 .limit(10)
                 .collect(Collectors.toList());
     }
 
-    @Override // Thêm @Override
+    @Override
     @Transactional
     public void incrementPopularCount(Long bookId) {
         if (bookId == null) return;
         Book book = getBookById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("Sách không tồn tại: " + bookId));
-        // Giả sử Entity Book có phương thức này
         book.setPopularCount(book.getPopularCount() + 1);
         bookRepository.save(book);
     }
 
-    @Override // Thêm @Override
+    @Override
     public Long countBooksByCategory(Long categoryId) {
         if (categoryId == null || categoryId <= 0) {
             return 0L;
@@ -125,7 +165,6 @@ public class BookServiceImpl implements BookService { // Sửa: Thêm "implement
         }
     }
 
-    // === CÁC PHƯƠNG THỨC NỘI BỘ (PRIVATE) GIỮ NGUYÊN ===
     private Book saveSafely(Book book, String errorMsg) {
         try {
             return bookRepository.save(book);

@@ -41,8 +41,10 @@
             </span>
         </div>
     </div>
+
     <div class="action-bar" style="display: flex; justify-content: flex-end; gap: 15px; margin: 15px 0;">
-        <a th:href="@{/books/new}" sec:authorize="hasRole('ADMIN')" class="btn btn-primary">Thêm Sách Mới</a>
+
+        <a th:href="@{/admin/products}" sec:authorize="hasRole('ADMIN')" class="btn btn-primary">Thêm Sách Mới</a>
 
         <a th:href="@{/cart}" class="btn btn-secondary">
             Giỏ hàng (<span th:text="${#lists.size(cartItems)}">0</span>)
@@ -85,11 +87,6 @@
         </tr>
         </tbody>
     </table>
-
-    <div th:if="${books == null || #lists.isEmpty(books)}" style="text-align: center; color: #666; margin: 30px 0;">
-        <p>Không có sách nào để hiển thị.</p>
-        <a th:href="@{/books/new}" style="color: #007bff;" sec:authorize="hasRole('ADMIN')">Thêm sách mới</a>
-    </div>
 
 </div>
 

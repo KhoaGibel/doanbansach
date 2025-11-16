@@ -62,7 +62,9 @@
         </div>
     </section>
     <div class="action-buttons">
-        <a th:href="@{/books/new}" sec:authorize="hasRole('ADMIN')">Thêm Sách Mới</a>
+
+        <a th:href="@{/admin/products}" sec:authorize="hasRole('ADMIN')">Thêm Sách Mới</a>
+
         <a th:href="@{/categories}" sec:authorize="hasRole('ADMIN')">Quản Lý Danh Mục</a>
     </div>
 
