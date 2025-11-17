@@ -69,6 +69,11 @@
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+            <!-- Không cần version nếu bạn dùng Spring Boot 3.2+ (nó tự quản lý) -->
+        </dependency>
 	</dependencies>
 
 	<build>

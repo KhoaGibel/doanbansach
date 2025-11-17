@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${book != null ? book.title + ' - VanlangBooks' : 'Chi Tiết Sách'}">
+        Chi Tiết Sách
+    </title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .container { max-width: 1200px; margin: 40px auto; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+        .book-detail { display: flex; gap: 40px; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .book-image { flex: 1; text-align: center; }
+        .book-image img {
+            width: 100%; max-width: 380px; height: 500px; object-fit: cover;
+            border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .book-info { flex: 1.5; }
+        .book-info h1 { font-size: 2.4em; color: #2d3436; margin: 0 0 15px 0; }
+        .author { font-size: 1.3em; color: #636e72; margin-bottom: 20px; }
+        .price {
+            font-size: 2.2em; color: #e17055; font-weight: bold; margin: 20px 0;
+            padding: 12px 0; border-top: 2px dashed #eee; border-bottom: 2px dashed #eee;
+        }
+        .description {
+            font-size: 1.1em; line-height: 1.8; color: #2d3436; margin: 25px 0;
+            padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #74b9ff;
+        }
+        .actions { margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .btn {
+            padding: 14px 28px; border: none; border-radius: 50px; font-size: 1.1em;
+            cursor: pointer; text-decoration: none; display: inline-block; text-align: center;
+            transition: all 0.3s; font-weight: bold;
+        }
+        .btn-add-cart { background: #e17055; color: white; }
+        .btn-add-cart:hover { background: #d63031; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(230,126,34,0.3); }
+        .btn-edit { background: #00b894; color: white; }
+        .btn-delete { background: #d63031; color: white; }
+        .btn-back { background: #74b9ff; color: white; }
+        .btn:hover { transform: translateY(-3px); }
+        .error { background: #ffeaa7; color: #d63031; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 20px; }
+        @media (max-width: 768px) {
+            .bookbook-detail { flex-direction: column; }
+            .book-image img { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+
+    <!-- Thông báo lỗi -->
+    <div th:if="${error != null}" class="error" th:text="${error}"></div>
+
+    <!-- Chi tiết sách -->
+    <div th:if="${book != null}" class="book-detail">
+
+        <div class="book-image">
+            <img th:src="${book.image != null && book.image.trim() != '' ? book.image : '/images/no-image.jpg'}"
+                 alt="Ảnh bìa sách"
+                 onerror="this.src='/images/no-image.jpg'">
+        </div>
+
+        <div class="book-info">
+            <h1 th:text="${book.title}">Tên sách</h1>
+            <p class="author">
+                Tác giả: <strong th:text="${book.author}">Tác giả</strong>
+            </p>
+
+            <div class="price">
+                <span th:text="${#numbers.formatInteger(book.price, 0, 'COMMA')} + ' ₫'">150.000 ₫</span>
+            </div>
+
+            <div class="description" th:text="${book.description}">
+                Mô tả chi tiết sách...
+            </div>
+
+            <div class="actions">
+                <a th:href="@{/add-to-cart/{id}(id=${book.id})}" class="btn btn-add-cart">
+                    Thêm vào giỏ hàng
+                </a>
+
+                <!-- Nút admin - chỉ hiện nếu là ADMIN -->
+                <div sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-edit">
+                        Sửa sách
+                    </a>
+                    <a th:href="@{/books/delete/{id}(id=${book.id})}"
+                       class="btn btn-delete"
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa sách này không?')">
+                        Xóa sách
+                    </a>
+                </div>
+
+                <a th:href="@{/books}" class="btn btn-back">
+                    Quay lại danh sách
+                </a>
+                <a th:href="@{/}" class="btn btn-back">
+                    Trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Không tìm thấy sách HOẶC có lỗi -->
+    <div th:if="${book == null && error == null}"
+         style="text-align:center;padding:100px 20px;font-size:1.5em;color:#636e72;">
+        Không tìm thấy sách này.
+        <br><br>
+        <a th:href="@{/books}" style="color:#74b9ff;font-weight:bold;font-size:1.1em;">Quay lại danh sách sách</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
