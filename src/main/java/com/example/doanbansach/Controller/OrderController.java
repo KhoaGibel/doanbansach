@@ -21,20 +21,18 @@ public class OrderController {
     @Autowired(required = false)
     private CartService cartService;
 
+    // ĐÃ XÓA HOẶC COMMENT DÒNG NÀY ĐỂ TRÁNH LỖI AMBIGUOUS
+    // @GetMapping
+    // public String showAdminDashboard() { return "admin"; }
 
-    @GetMapping
-    public String showAdminDashboard() {
-        return "admin"; // Trả về file /templates/admin.html
-    }
-
-    // Xem danh sách tất cả đơn đặt hàng (URL: /admin/orders)
+    // Danh sách đơn hàng
     @GetMapping("/orders")
     public String listAllOrders(Model model) {
         model.addAttribute("orders", orderService.getAllOrders());
         return "admin/order_list";
     }
 
-    // Xem chi tiết một đơn đặt hàng
+    // Chi tiết đơn hàng
     @GetMapping("/orders/detail/{id}")
     public String viewOrderDetail(@PathVariable Long id, Model model, RedirectAttributes ra) {
         try {
@@ -48,7 +46,7 @@ public class OrderController {
         }
     }
 
-    // Form sửa trạng thái đơn hàng
+    // Form chỉnh sửa trạng thái
     @GetMapping("/orders/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Order order = orderService.getOrderById(id)
@@ -58,7 +56,7 @@ public class OrderController {
         return "admin/edit_order";
     }
 
-    // Cập nhật trạng thái đơn hàng
+    // Cập nhật trạng thái
     @PostMapping("/orders/update-status/{id}")
     public String updateOrderStatus(@PathVariable Long id,
                                     @RequestParam("status") String newStatus,
