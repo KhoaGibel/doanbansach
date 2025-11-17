@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +25,17 @@ public class BookServiceImpl implements BookService {
 
     @Value("${app.upload.dir}")
     private String uploadDir;
+
+    private void createUploadDirectory() {
+        try {
+            Path path = Paths.get(uploadDir);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Không thể tạo thư mục lưu ảnh: " + uploadDir, e);
+        }
+    }
 
     @Override
     public List<Book> getAllBooks() {
@@ -44,22 +55,26 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void addBook(Book book, MultipartFile file) throws IOException {
+    public Book addBook(Book book, MultipartFile file) throws IOException {
+        createUploadDirectory();
+
         if (!file.isEmpty()) {
             String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
             Path copyLocation = Paths.get(uploadDir + fileName);
 
             Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-            book.setImage(fileName); // SỬA LỖI: setImagePath -> setImage
+            book.setImage(fileName);
         } else if (book.getImage() == null || book.getImage().isEmpty()) {
             book.setImage("default-book.png");
         }
-        saveSafely(book, "Lỗi lưu sách");
+        return saveSafely(book, "Lỗi lưu sách");
     }
 
     @Override
     @Transactional
-    public void updateBook(Long id, Book bookDetails, MultipartFile file) throws IOException {
+    public Book updateBook(Long id, Book bookDetails, MultipartFile file) throws IOException {
+        createUploadDirectory();
+
         if (id == null || bookDetails == null) {
             throw new IllegalArgumentException("ID hoặc dữ liệu sách không hợp lệ");
         }
@@ -74,20 +89,20 @@ public class BookServiceImpl implements BookService {
         existingBook.setCategory(bookDetails.getCategory());
 
         if (!file.isEmpty()) {
-            // Logic xóa ảnh cũ
-            if (existingBook.getImage() != null && !existingBook.getImage().equals("default-book.png")) { // SỬA LỖI: getImagePath -> getImage
+            if (existingBook.getImage() != null && !existingBook.getImage().equals("default-book.png")) {
                 Path oldImagePath = Paths.get(uploadDir + existingBook.getImage());
                 Files.deleteIfExists(oldImagePath);
             }
 
-            // Logic lưu ảnh mới
             String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
             Path copyLocation = Paths.get(uploadDir + fileName);
             Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-            existingBook.setImage(fileName); // SỬA LỖI: setImagePath -> setImage
+            existingBook.setImage(fileName);
+        } else if (bookDetails.getImage() != null) {
+            existingBook.setImage(bookDetails.getImage());
         }
 
-        saveSafely(existingBook, "Lỗi cập nhật sách");
+        return saveSafely(existingBook, "Lỗi cập nhật sách");
     }
 
     @Override
@@ -98,8 +113,7 @@ public class BookServiceImpl implements BookService {
         Optional<Book> bookOptional = getBookById(id);
         if (bookOptional.isPresent()) {
             Book book = bookOptional.get();
-            // Xóa file vật lý trước
-            if (book.getImage() != null && !book.getImage().equals("default-book.png")) { // SỬA LỖI: getImage/getImagePath
+            if (book.getImage() != null && !book.getImage().equals("default-book.png")) {
                 Path imagePath = Paths.get(uploadDir + book.getImage());
                 Files.deleteIfExists(imagePath);
             }
@@ -114,7 +128,6 @@ public class BookServiceImpl implements BookService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAllBooks();
         }
-        // SỬA LỖI: findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase
         return safeList(bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword));
     }
 
@@ -128,16 +141,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getNewestBooks() {
-        // SỬA LỖI: findTop5 -> findTop8 (theo lỗi bạn báo)
-        return bookRepository.findTop8ByOrderByCreatedAtDesc().stream()
+        return bookRepository.findTop5ByOrderByCreatedAtDesc().stream()
                 .limit(10)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Book> getTopPopularBooks() {
-        // SỬA LỖI: findTop5 -> findTop8 (theo lỗi bạn báo)
-        return bookRepository.findTop8ByOrderByPopularCountDesc().stream()
+        return bookRepository.findTop5ByOrderByPopularCountDesc().stream()
                 .limit(10)
                 .collect(Collectors.toList());
     }

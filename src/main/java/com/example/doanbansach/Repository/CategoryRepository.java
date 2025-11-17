@@ -9,17 +9,9 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    /**
-     * Tìm danh mục theo tên (không phân biệt hoa thường)
-     * @param name Tên danh mục cần tìm
-     * @return Optional chứa Category nếu tồn tại
-     */
-    Optional<Category> findByNameIgnoreCase(String name);
-
-    /**
-     * Kiểm tra xem tên danh mục đã tồn tại chưa (không phân biệt hoa thường)
-     * @param name Tên danh mục cần kiểm tra
-     * @return true nếu đã tồn tại, false nếu chưa
-     */
+    // 1. Phương thức này cần thiết cho logic update/save kiểm tra trùng lặp
     boolean existsByNameIgnoreCase(String name);
+
+    // Phương thức tùy chọn: Tìm danh mục theo tên (không phân biệt hoa thường)
+    Optional<Category> findByNameIgnoreCase(String name);
 }

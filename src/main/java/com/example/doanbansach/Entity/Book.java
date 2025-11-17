@@ -127,8 +127,7 @@ public class Book {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
-                ", price=" + price +
-                '}';
+                ", price=" + price + "VNĐ";
     }
 
     @Override

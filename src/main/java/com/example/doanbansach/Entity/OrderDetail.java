@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "order_details")
-public class OrderDetail { // <--- BẠN BỊ THIẾU "PUBLIC" Ở ĐÂY
+public class OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

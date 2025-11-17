@@ -120,6 +120,7 @@ public class BookController {
         }
 
         try {
+            // FIX LỖI VALIDATION: Thiết lập Category trước khi gọi Service
             if (categoryId != null && categoryId > 0) {
                 Category category = categoryService.getCategoryById(categoryId)
                         .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
@@ -157,7 +158,7 @@ public class BookController {
             @Valid @ModelAttribute("book") Book bookDetails,
             BindingResult bindingResult,
             @RequestParam(value = "categoryId", required = false) Long categoryId,
-            @RequestParam("imageFile") MultipartFile imageFile, // THÊM THAM SỐ NÀY
+            @RequestParam("imageFile") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes) {
 
@@ -175,6 +176,7 @@ public class BookController {
             existingBook.setPrice(bookDetails.getPrice());
             existingBook.setDescription(bookDetails.getDescription());
 
+            // FIX LỖI VALIDATION: Thiết lập Category trước khi gọi Service
             if (categoryId != null && categoryId > 0) {
                 Category category = categoryService.getCategoryById(categoryId)
                         .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
@@ -183,7 +185,7 @@ public class BookController {
                 existingBook.setCategory(null);
             }
 
-            bookService.updateBook(id, existingBook, imageFile); // CẬP NHẬT LỆNH GỌI
+            bookService.updateBook(id, existingBook, imageFile);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sách thành công!");
             return "redirect:/admin/products";
         } catch (Exception e) {
@@ -204,9 +206,6 @@ public class BookController {
         }
         return "redirect:/admin/products";
     }
-
-    // ... (Giữ nguyên các phương thức còn lại)
-    // ...
 
     @GetMapping("/books/detail/{id}")
     public String viewBookDetail(@PathVariable Long id, Model model, RedirectAttributes ra) {
@@ -289,9 +288,6 @@ public class BookController {
             return "cart";
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi tải giỏ hàng: " + e.getMessage());
-            model.addAttribute("cartItems", List.of());
-            model.addAttribute("total", 0.0);
-            e.printStackTrace();
             return "cart";
         }
     }

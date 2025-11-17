@@ -37,7 +37,7 @@
             <h3>Thêm Sản phẩm Mới</h3>
             <form id="add-product-form" th:action="@{/books}" th:object="${book}" method="post" enctype="multipart/form-data">
 
-                <label for="product-name">Tiêu Đề (Tên sản phẩm):</label>
+                <label for="product-name">Tên sản phẩm:</label>
                 <input type="text" id="product-name" th-field="*{title}" required>
                 <span th-if="${#fields.hasErrors('title')}" th-errors="*{title}" class="error"></span>
 
@@ -106,7 +106,6 @@
     </section>
 </main>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/scripts/admin.js}"></script>
 </body>
 </html>

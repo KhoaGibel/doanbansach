@@ -8,20 +8,18 @@ import java.util.Optional;
 
 public interface BookService {
     List<Book> getAllBooks();
-
-    // Cập nhật phương thức thêm sách
-    void addBook(Book book, MultipartFile imageFile) throws IOException;
-
     Optional<Book> getBookById(Long id);
 
-    // Cập nhật phương thức sửa sách
-    void updateBook(Long id, Book bookDetails, MultipartFile imageFile) throws IOException;
+    Book addBook(Book book, MultipartFile file) throws IOException;
 
-    void deleteBook(Long id) throws IOException; // Phương thức xóa có thể cần IOException
+    // SỬA: Chữ ký phương thức phải có MultipartFile và throws IOException
+    Book updateBook(Long id, Book bookDetails, MultipartFile file) throws IOException;
 
+    void deleteBook(Long id) throws IOException;
+
+    List<Book> searchBooks(String keyword);
     List<Book> getBooksByCategory(Long categoryId);
     Long countBooksByCategory(Long categoryId);
-    List<Book> searchBooks(String keyword);
     List<Book> getNewestBooks();
     List<Book> getTopPopularBooks();
     void incrementPopularCount(Long bookId);

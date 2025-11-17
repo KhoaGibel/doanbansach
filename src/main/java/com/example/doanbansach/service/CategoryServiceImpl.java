@@ -4,6 +4,7 @@ import com.example.doanbansach.Entity.Category;
 import com.example.doanbansach.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Thêm import này
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional // THÊM: Đánh dấu giao dịch
     public Category saveCategory(Category category) {
         String name = category.getName().trim();
         if (name.isEmpty()) {
@@ -38,6 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional // THÊM: Đánh dấu giao dịch
     public Category updateCategory(Long id, Category categoryDetails) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại: " + id));
@@ -58,10 +61,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional // THÊM: Đánh dấu giao dịch
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại: " + id));
 
+        // CHÚ Ý: Đảm bảo bạn đang chạy trong transaction để access getBooks()
         if (category.getBooks() != null && !category.getBooks().isEmpty()) {
             throw new RuntimeException("Không thể xóa danh mục '" + category.getName() +
                     "' vì đang có " + category.getBooks().size() + " sách!");

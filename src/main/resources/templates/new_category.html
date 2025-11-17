@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Danh Mục Mới</title>
+
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .form-container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .form-container input[type="text"], .form-container textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        .form-container button { padding: 10px 20px; background-color: #343a40; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .error-message { color: red; font-size: 0.9em; margin-bottom: 10px; display: block; text-align: left; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
+
+<main class="form-container">
+    <h2>Thêm Danh Mục Mới</h2>
+
+    <div th-if="${error}" class="alert alert-danger" th-text="${error}"></div>
+
+    <form th-action="@{/categories}" th-object="${category}" method="post">
+
+        <label for="category-name">Tên Danh Mục:</label>
+        <span th-if="${#fields.hasErrors('name')}" th-errors="*{name}" class="error-message"></span>
+        <input type="text" id="category-name" th-field="*{name}" required autofocus>
+
+        <label for="category-desc">Mô Tả:</label>
+        <textarea id="category-desc" th-field="*{description}" rows="3"></textarea>
+
+        <button type="submit">Lưu Danh Mục</button>
+        <a th-href="@{/categories}" style="margin-left: 15px;">Quay lại Danh sách</a>
+    </form>
+</main>
+
+<div th-replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

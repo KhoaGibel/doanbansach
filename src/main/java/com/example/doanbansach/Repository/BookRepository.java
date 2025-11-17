@@ -9,16 +9,18 @@ import java.util.List;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-
+    // 1. Dùng cho searchBooks (Tìm kiếm theo Title HOẶC Author)
     List<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String titleKeyword, String authorKeyword);
 
+    // 2. Dùng cho getBooksByCategory
     List<Book> findByCategoryId(Long categoryId);
 
+    // 3. Dùng cho countBooksByCategory
     Long countByCategoryId(Long categoryId);
 
+    // 4. Sửa lỗi: Cho Sách Mới Nhất
+    List<Book> findTop5ByOrderByCreatedAtDesc();
 
-    List<Book> findTop8ByOrderByCreatedAtDesc();
-
-
-    List<Book> findTop8ByOrderByPopularCountDesc();
+    // 5. Cho Sách Bán Chạy
+    List<Book> findTop5ByOrderByPopularCountDesc();
 }

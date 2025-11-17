@@ -25,25 +25,33 @@ public class CategoryController {
 
     @GetMapping("/new")
     public String showNewCategoryForm(Model model) {
-        model.addAttribute("category", new Category());
+        if (!model.containsAttribute("category")) {
+            model.addAttribute("category", new Category());
+        }
         return "new_category";
     }
 
     @PostMapping
     public String saveCategory(@Valid @ModelAttribute("category") Category category,
                                BindingResult bindingResult,
-                               Model model,
                                RedirectAttributes redirectAttributes) {
+
         if (bindingResult.hasErrors()) {
-            return "new_category";
+            // SỬA: Gửi lỗi Validation (BindingResult) và dữ liệu cũ qua Flash Attribute
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category", bindingResult);
+            redirectAttributes.addFlashAttribute("category", category);
+            return "redirect:/categories/new"; // Redirect trở lại trang Form
         }
+
         try {
             categoryService.saveCategory(category);
             redirectAttributes.addFlashAttribute("success", "Thêm danh mục thành công!");
             return "redirect:/categories";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            return "new_category";
+            // SỬA: Gửi lỗi Runtime (Trùng tên/DB) và dữ liệu Category qua Flash Attribute
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("category", category);
+            return "redirect:/categories/new"; // Redirect trở lại trang Form
         }
     }
 
@@ -62,6 +70,8 @@ public class CategoryController {
                                  Model model,
                                  RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("error", "Lỗi: Vui lòng kiểm tra lại thông tin danh mục.");
+            model.addAttribute("category", category);
             return "edit_category";
         }
         try {

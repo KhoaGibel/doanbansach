@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<header th-fragment="adminHeader">
+    <div class="Logo" style="margin-left: 20px;">
+        <a th-href="@{/admin}" style="text-decoration: none; color: inherit;">
+            <h1 style="margin-right: 20px;">VanlangBooks - Admin</h1>
+        </a>
+    </div>
+    <nav>
+        <ul>
+            <li><a th-href="@{/admin}">Dashboard</a></li>
+            <li class="active"><a th-href="@{/admin/products}">Sản phẩm</a></li>
+            <li><a th-href="@{/admin/orders}">Đơn hàng</a></li>
+            <li><a th-href="@{/admin/users}">Người dùng</a></li>
+            <li><a th-href="@{/logout}">Đăng xuất</a></li>
+        </ul>
+    </nav>
+</header>
+
+</body>
+</html>
