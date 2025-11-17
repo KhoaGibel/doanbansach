@@ -34,11 +34,13 @@
             </div>
             <div th:each="product : ${popularBooks}" class="product-item">
                 <a th:href="@{/books/detail/{id}(id=${product.id})}">
-                    <img th:src="@{/asset/img/products/{imgName}(imgName=${product.image})}"
+
+                    <img th:src="@{/asset/img/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
                          onerror="this.src='/images/default-book.png';">
+
                     <h4 th:text="${product.title}">Tên sách</h4>
-                    <p class="price" th:text="${product.price} + ' VNĐ'">Giá bán</p>
+                    <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá bán</p>
                 </a>
             </div>
         </div>
@@ -52,11 +54,13 @@
             </div>
             <div th:each="product : ${newestBooks}" class="product-item">
                 <a th:href="@{/books/detail/{id}(id=${product.id})}">
-                    <img th:src="@{/asset/img/products/{imgName}(imgName=${product.image})}"
+
+                    <img th:src="@{/asset/img/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
                          onerror="this.src='/images/default-book.png';">
+
                     <h4 th:text="${product.title}">Tên sách</h4>
-                    <p class="price" th:text="${product.price} + ' VNĐ'">Giá bán</p>
+                    <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá bán</p>
                 </a>
             </div>
         </div>
@@ -65,7 +69,7 @@
 
         <a th:href="@{/admin/products}" sec:authorize="hasRole('ADMIN')">Thêm Sách Mới</a>
 
-        <a th:href="@{/categories}" sec:authorize="hasRole('ADMIN')">Quản Lý Danh Mục</a>
+        <a th:href="@{/categories/category/create}" sec:authorize="hasRole('ADMIN')">Quản Lý Danh Mục</a>
     </div>
 
 </div>

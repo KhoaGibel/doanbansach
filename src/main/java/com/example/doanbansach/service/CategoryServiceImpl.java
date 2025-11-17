@@ -16,25 +16,25 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
+    @Transactional(readOnly = true) // Thêm readOnly cho hàm GET
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true) // Thêm readOnly cho hàm GET
     public Optional<Category> getCategoryById(Long id) {
         return categoryRepository.findById(id);
     }
 
     @Override
-    @Transactional
+    @Transactional // QUAN TRỌNG: Đánh dấu giao dịch để lưu
     public Category saveCategory(Category category) {
         String name = category.getName().trim();
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Tên danh mục không được để trống!");
         }
-        // Kiểm tra trùng lặp
         if (categoryRepository.existsByNameIgnoreCase(name)) {
-            // Ném ra RuntimeException để Controller bắt và hiển thị lỗi
             throw new RuntimeException("Danh mục '" + name + "' đã tồn tại!");
         }
         category.setName(name);
@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
+    @Transactional // QUAN TRỌNG: Đánh dấu giao dịch
     public Category updateCategory(Long id, Category categoryDetails) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại: " + id));
@@ -63,12 +63,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
+    @Transactional // QUAN TRỌNG: Đánh dấu giao dịch
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại: " + id));
 
-        // Nếu bạn đã có ràng buộc khóa ngoại (Foreign Key), dòng này sẽ là đủ
         categoryRepository.delete(category);
     }
 }

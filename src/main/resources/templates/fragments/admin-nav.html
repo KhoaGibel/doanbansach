@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <style>
+        header.admin-header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #343a40; /* Nền đen/xám đậm */
+            color: white;
+            border-bottom: 2px solid #495057;
+        }
+        header.admin-header-nav .Logo h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.5em;
+        }
+        header.admin-header-nav nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+        header.admin-header-nav nav ul li a {
+            color: #f8f9fa;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        header.admin-header-nav nav ul li a:hover {
+            background-color: #495057;
+            color: white;
+        }
+    </style>
+</head>
 <body>
 
-<header th-fragment="adminHeader">
-    <div class="Logo" style="margin-left: 20px;">
-        <a th-href="@{/admin}" style="text-decoration: none; color: inherit;">
-            <h1 style="margin-right: 20px;">VanlangBooks - Admin</h1>
+<header th:fragment="adminHeader" class="admin-header-nav">
+    <div class="Logo">
+        <a th:href="@{/admin}" style="text-decoration: none; color: inherit;">
+            <h1>VanlangBooks - Admin</h1>
         </a>
     </div>
     <nav>
         <ul>
-            <li><a th-href="@{/admin}">Dashboard</a></li>
-            <li class="active"><a th-href="@{/admin/products}">Sản phẩm</a></li>
-            <li><a th-href="@{/admin/orders}">Đơn hàng</a></li>
-            <li><a th-href="@{/admin/users}">Người dùng</a></li>
-            <li><a th-href="@{/logout}">Đăng xuất</a></li>
+            <li><a th:href="@{/admin}">Dashboard</a></li>
+            <li><a th:href="@{/admin/products}">Sản phẩm</a></li>
+            <li><a th:href="@{/admin/orders}">Đơn hàng</a></li>
+            <li><a th:href="@{/admin/users}">Người dùng</a></li>
+            <li><a th:href="@{/logout}">Đăng xuất</a></li>
         </ul>
     </nav>
 </header>

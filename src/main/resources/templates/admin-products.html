@@ -8,25 +8,22 @@
     <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" th:href="@{/asset/img/logo/favicon.ico}" type="image/x-icon">
+    <style>
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .checkbox-group input {
+            width: auto;
+        }
+    </style>
 </head>
 <body>
 
-<header th:fragment="adminHeader">
-    <div class="Logo" style="margin-left: 20px;">
-        <a th:href="@{/admin}" style="text-decoration: none; color: inherit;">
-            <h1 style="margin-right: 20px;">VanlangBooks - Admin</h1>
-        </a>
-    </div>
-    <nav>
-        <ul>
-            <li><a th:href="@{/admin}">Dashboard</a></li>
-            <li class="active"><a th:href="@{/admin/products}">Sản phẩm</a></li>
-            <li><a th:href="@{/admin/orders}">Đơn hàng</a></li>
-            <li><a th:href="@{/admin/users}">Người dùng</a></li>
-            <li><a th:href="@{/logout}">Đăng xuất</a></li>
-        </ul>
-    </nav>
-</header>
+<div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
+
 <main>
     <section class="admin-section">
 
@@ -37,31 +34,44 @@
             <h3>Thêm Sản phẩm Mới</h3>
             <form id="add-product-form" th:action="@{/books}" th:object="${book}" method="post" enctype="multipart/form-data">
 
+                <input th:if="${_csrf}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
                 <label for="product-name">Tên sản phẩm:</label>
-                <input type="text" id="product-name" th-field="*{title}" required>
-                <span th-if="${#fields.hasErrors('title')}" th-errors="*{title}" class="error"></span>
+                <input type="text" id="product-name" th:field="*{title}" required>
+                <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
 
                 <label for="product-author">Tác Giả:</label>
-                <input type="text" id="product-author" th-field="*{author}" required>
-                <span th-if="${#fields.hasErrors('author')}" th-errors="*{author}" class="error"></span>
+                <input type="text" id="product-author" th:field="*{author}" required>
+                <span th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="error"></span>
 
                 <label for="product-price">Giá (Price):</label>
-                <input type="number" id="product-price" th-field="*{price}" step="0.01" required>
-                <span th-if="${#fields.hasErrors('price')}" th-errors="*{price}" class="error"></span>
+                <input type="number" id="product-price" th:field="*{price}" step="0.01" required>
+                <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error"></span>
 
                 <label for="imageFile">Ảnh Sản phẩm (JPG, PNG, GIF):</label>
                 <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
+
                 <label for="product-category">Danh Mục:</label>
-                <select name="categoryId" id="product-category">
+                <select th:field="*{category}" id="product-category" required>
                     <option value="">-- Chọn danh mục --</option>
-                    <option th-each="cat : ${categories}"
-                            th-value="${cat.id}"
-                            th-text="${cat.name}">
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name}">
                     </option>
                 </select>
+                <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="error"></span>
 
                 <label for="product-desc">Mô Tả:</label>
-                <textarea id="product-desc" th-field="*{description}" rows="3"></textarea>
+                <textarea id="product-desc" th:field="*{description}" rows="3"></textarea>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="featured" th:field="*{featured}" />
+                    <label for="featured">Đánh dấu Nổi bật (Featured)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="bestseller" th:field="*{bestseller}" />
+                    <label for="bestseller">Đánh dấu Bán chạy (Bestseller)</label>
+                </div>
 
                 <button type="submit">Thêm Sản phẩm</button>
             </form>

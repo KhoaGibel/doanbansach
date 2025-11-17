@@ -88,6 +88,10 @@ public class BookServiceImpl implements BookService {
         existingBook.setDescription(bookDetails.getDescription());
         existingBook.setCategory(bookDetails.getCategory());
 
+        // Cập nhật các trường boolean mới
+        existingBook.setFeatured(bookDetails.isFeatured());
+        existingBook.setBestseller(bookDetails.isBestseller());
+
         if (!file.isEmpty()) {
             if (existingBook.getImage() != null && !existingBook.getImage().equals("default-book.png")) {
                 Path oldImagePath = Paths.get(uploadDir + existingBook.getImage());
@@ -128,6 +132,7 @@ public class BookServiceImpl implements BookService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAllBooks();
         }
+        // Sửa lỗi: Khớp với BookRepository
         return safeList(bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword));
     }
 
@@ -141,14 +146,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getNewestBooks() {
-        return bookRepository.findTop5ByOrderByCreatedAtDesc().stream()
+        // Sửa lỗi: Khớp với BookRepository (findTop8 thay vì findTop5)
+        return bookRepository.findTop8ByOrderByCreatedAtDesc().stream()
                 .limit(10)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Book> getTopPopularBooks() {
-        return bookRepository.findTop5ByOrderByPopularCountDesc().stream()
+        // Sửa lỗi: Khớp với BookRepository (findTop8 thay vì findTop5)
+        return bookRepository.findTop8ByOrderByPopularCountDesc().stream()
                 .limit(10)
                 .collect(Collectors.toList());
     }

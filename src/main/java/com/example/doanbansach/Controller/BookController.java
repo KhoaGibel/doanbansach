@@ -103,14 +103,19 @@ public class BookController {
         }
     }
 
+    // SỬA LỖI VALIDATION (PHƯƠNG THỨC SAVE)
     @PostMapping("/books")
     public String saveBook(
             @Valid @ModelAttribute("book") Book book,
             BindingResult bindingResult,
-            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            // 1. XÓA: @RequestParam(value = "categoryId")
             @RequestParam("imageFile") MultipartFile imageFile,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) { // Xóa Model model
+
+        // 2. KIỂM TRA THỦ CÔNG: Kiểm tra xem Category ID có được gửi lên không
+        if (book.getCategory() == null || book.getCategory().getId() == null) {
+            bindingResult.rejectValue("category", "error.book", "Vui lòng chọn một danh mục.");
+        }
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.book", bindingResult);
@@ -120,12 +125,10 @@ public class BookController {
         }
 
         try {
-            // FIX LỖI VALIDATION: Thiết lập Category trước khi gọi Service
-            if (categoryId != null && categoryId > 0) {
-                Category category = categoryService.getCategoryById(categoryId)
-                        .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
-                book.setCategory(category);
-            }
+            // 3. TẢI LẠI CATEGORY: Tải đối tượng Category đầy đủ từ ID
+            Category category = categoryService.getCategoryById(book.getCategory().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
+            book.setCategory(category); // Gán lại đối tượng đầy đủ vào sách
 
             bookService.addBook(book, imageFile);
             redirectAttributes.addFlashAttribute("success", "Thêm sách thành công!");
@@ -152,15 +155,21 @@ public class BookController {
         }
     }
 
+    // SỬA LỖI VALIDATION (PHƯƠNG THỨC UPDATE)
     @PostMapping("/books/{id}")
     public String updateBook(
             @PathVariable Long id,
             @Valid @ModelAttribute("book") Book bookDetails,
             BindingResult bindingResult,
-            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            // 1. XÓA: @RequestParam(value = "categoryId")
             @RequestParam("imageFile") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes) {
+
+        // 2. KIỂM TRA THỦ CÔNG:
+        if (bookDetails.getCategory() == null || bookDetails.getCategory().getId() == null) {
+            bindingResult.rejectValue("category", "error.book", "Vui lòng chọn một danh mục.");
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
@@ -168,24 +177,12 @@ public class BookController {
         }
 
         try {
-            Book existingBook = bookService.getBookById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Sách không tồn tại"));
+            // 3. TẢI LẠI CATEGORY:
+            Category category = categoryService.getCategoryById(bookDetails.getCategory().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
+            bookDetails.setCategory(category);
 
-            existingBook.setTitle(bookDetails.getTitle());
-            existingBook.setAuthor(bookDetails.getAuthor());
-            existingBook.setPrice(bookDetails.getPrice());
-            existingBook.setDescription(bookDetails.getDescription());
-
-            // FIX LỖI VALIDATION: Thiết lập Category trước khi gọi Service
-            if (categoryId != null && categoryId > 0) {
-                Category category = categoryService.getCategoryById(categoryId)
-                        .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
-                existingBook.setCategory(category);
-            } else {
-                existingBook.setCategory(null);
-            }
-
-            bookService.updateBook(id, existingBook, imageFile);
+            bookService.updateBook(id, bookDetails, imageFile);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sách thành công!");
             return "redirect:/admin/products";
         } catch (Exception e) {

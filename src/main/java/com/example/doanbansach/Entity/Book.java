@@ -3,6 +3,8 @@ package com.example.doanbansach.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull; // Thêm import này
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -23,7 +25,8 @@ public class Book {
     private String author;
 
     @Column(nullable = false)
-    @DecimalMin(value = "0.0", inclusive = true, message = "Giá phải lớn hơn hoặc bằng 0")
+    @NotNull(message = "Giá không được để trống") // Thêm @NotNull
+    @DecimalMin(value = "0.0", inclusive = false, message = "Giá phải lớn hơn 0") // Sửa: inclusive = false
     private Double price;
 
     @Column(columnDefinition = "TEXT")
@@ -40,7 +43,17 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @NotNull(message = "Danh mục không được để trống") // SỬA LỖI VALIDATION
     private Category category;
+
+    // === BỔ SUNG 2 TRƯỜNG MỚI ===
+    @Column(name = "is_featured", columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean featured = false;
+
+    @Column(name = "is_bestseller", columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean bestseller = false;
+    // === KẾT THÚC BỔ SUNG ===
+
 
     @PrePersist
     protected void onCreate() {
@@ -48,6 +61,8 @@ public class Book {
     }
 
     public Book() {}
+
+    // --- Getters and Setters ---
 
     public Long getId() {
         return id;
@@ -120,6 +135,24 @@ public class Book {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    // === GETTERS/SETTERS CHO TRƯỜNG MỚI ===
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+    public boolean isBestseller() {
+        return bestseller;
+    }
+
+    public void setBestseller(boolean bestseller) {
+        this.bestseller = bestseller;
+    }
+    // === KẾT THÚC GETTERS/SETTERS MỚI ===
 
     @Override
     public String toString() {

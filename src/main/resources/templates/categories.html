@@ -1,25 +1,132 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><title>Quản Lý Danh Mục</title></head>
-<body>
-<h1>Quản Lý Danh Mục Sách</h1>
-<div th:if="${success}" style="color:green;" th:text="${success}"></div>
-<div th:if="${error}" style="color:red;" th:text="${error}"></div>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Danh Mục</title>
 
-<table border="1">
-    <tr><th>ID</th><th>Tên Danh Mục</th><th>Mô Tả</th><th>Hành Động</th></tr>
-    <tr th:each="cat : ${categories}">
-        <td th:text="${cat.id}"></td>
-        <td><a th:href="@{'/categories/' + ${cat.id}}">[[${cat.name}]]</a></td>
-        <td th:text="${cat.description ?: 'Không có'}"></td>
-        <td>
-            <a th:href="@{'/categories/edit/' + ${cat.id}}">Sửa</a> |
-            <a th:href="@{'/categories/delete/' + ${cat.id}}"
-               onclick="return confirm('Xóa danh mục này?')">Xóa</a>
-        </td>
-    </tr>
-</table>
-<br>
-<a th:href="@{/categories/new}">Thêm danh mục mới</a> | <a th:href="@{/books}">Quay lại sách</a>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 40px auto 20px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h2 { margin-bottom: 20px; }
+
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .category-table th, .category-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .category-table th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        /* Nút hành động */
+        .btn-action {
+            padding: 6px 10px;
+            margin: 0 5px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .edit   { background-color: #007bff; color: white; }
+        .edit:hover { background-color: #0056b3; }
+        .delete { background-color: #dc3545; color: white; }
+        .delete:hover { background-color: #c82333; }
+
+        .btn-add {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #343a40;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .btn-add:hover { background-color: #23272b; }
+
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger  { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .action-footer {
+            text-align: right;
+            margin-top: 30px;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header-nav}"></div>
+<div class="container">
+    <h2><i class="fas fa-list-alt"></i> Quản Lý Danh Mục</h2>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <table class="category-table" th:if="${!#lists.isEmpty(categories)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Danh Mục</th>
+            <th>Mô Tả</th>
+            <th width="150">Thao Tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.name}"></td>
+            <td th:text="${category.description ?: 'Không có mô tả'}"></td>
+            <td>
+                <a th:href="@{|/categories/edit/${category.id}|}" class="btn-action edit">
+                    <i class="fas fa-edit"></i> Sửa
+                </a>
+                <a th:href="@{|/categories/delete/${category.id}|}"
+                   onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')"
+                   class="btn-action delete">
+                    <i class="fas fa-trash"></i> Xóa
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${#lists.isEmpty(categories)}" class="no-data">
+        <p>Chưa có danh mục nào. Hãy thêm danh mục đầu tiên!</p>
+    </div>
+
+    <div class="action-footer">
+        <a th:href="@{/categories/category/create}" class="btn-add">
+            <i class="fas fa-plus"></i> Thêm Danh Mục Mới
+        </a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
 </body>
 </html>
