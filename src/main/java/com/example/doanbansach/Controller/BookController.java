@@ -144,7 +144,7 @@ public class BookController {
                     .orElseThrow(() -> new IllegalArgumentException("ID sách không tồn tại: " + id));
             model.addAttribute("book", book);
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "admin/edit_book";
+            return "edit_book"; // Sửa: Trỏ về edit_book.html
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
             return "redirect:/admin/products";
@@ -161,27 +161,28 @@ public class BookController {
             RedirectAttributes redirectAttributes) {
 
         if (bookDetails.getCategory() == null || bookDetails.getCategory().getId() == null) {
-            bindingResult.rejectValue("category", "error.book", "Vui lòng chọn một danh mục.");
+            bindingResult.rejectValue("category.id", "error.book", "Vui lòng chọn một danh mục.");
         }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "admin/edit_book";
+            return "edit_book";   // Sửa: Trỏ về edit_book.html
         }
 
         try {
             Category category = categoryService.getCategoryById(bookDetails.getCategory().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
-            bookDetails.setCategory(category);
 
+            bookDetails.setCategory(category);
             bookService.updateBook(id, bookDetails, imageFile);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sách thành công!");
             return "redirect:/admin/products";
+
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi cập nhật sách: " + e.getMessage());
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
             e.printStackTrace();
-            return "admin/edit_book";
+            return "edit_book";   // Sửa: Trỏ về edit_book.html
         }
     }
 
@@ -255,8 +256,8 @@ public class BookController {
         }
     }
 
-    // ĐÃ XÓA HÀM addToCart Ở ĐÂY – KHÔNG ĐỂ TRÙNG VỚI CartController NỮA!
-    // Giờ chỉ để CartController xử lý /add-to-cart/{id}
+    // SỬA LỖI: ĐÃ XÓA HÀM addToCart() GÂY TRÙNG LẶP
+    // @GetMapping("/add-to-cart/{id}") ...
 
     @GetMapping("/aboutus")
     public String showAboutUsPage() {
@@ -283,7 +284,6 @@ public class BookController {
         return items;
     }
 
-    // calculateTotal() vẫn giữ để dùng ở các trang khác nếu cần
     private double calculateTotal() {
         return getCartItemsWithQuantity().stream()
                 .mapToDouble(item -> item.book().getPrice() * item.quantity())

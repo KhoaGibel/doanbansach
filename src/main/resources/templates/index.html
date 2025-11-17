@@ -27,7 +27,6 @@
         </div>
     </div>
 
-    <!-- SÁCH BÁN CHẠY -->
     <section id="popular-books-section" class="bestseller-section">
         <h2 class="bestseller-title">SÁCH BÁN CHẠY (Popular)</h2>
         <div class="product-list" id="product-list-popular">
@@ -37,7 +36,6 @@
             <div th:each="product : ${popularBooks}" class="product-item">
                 <a th:href="@{/books/detail/{id}(id=${product.id})}">
 
-                    <!-- SỬA LỖI: Trỏ đến Resource Handler /uploads/ (đã tạo trong MvcConfig.java) -->
                     <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
                          onerror="this.src='/images/default-book.png';">
@@ -49,7 +47,6 @@
         </div>
     </section>
 
-    <!-- SÁCH MỚI NHẤT -->
     <section id="newest-books-section" class="bestseller-section" style="margin-top: 40px;">
         <h2 class="bestseller-title">SÁCH MỚI NHẤT (Newest)</h2>
         <div class="product-list" id="product-list-newest">
@@ -59,7 +56,6 @@
             <div th:each="product : ${newestBooks}" class="product-item">
                 <a th:href="@{/books/detail/{id}(id=${product.id})}">
 
-                    <!-- SỬA LỖI: Trỏ đến Resource Handler /uploads/ -->
                     <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
                          onerror="this.src='/images/default-book.png';">
@@ -74,7 +70,6 @@
     <div class="action-buttons" sec:authorize="hasRole('ADMIN')">
         <a th:href="@{/admin/products}">Thêm Sách Mới</a>
         <a th:href="@{/categories}" sec:authorize="hasRole('ADMIN')">Quản Lý Danh Mục</a>
-
     </div>
 
 </div>
