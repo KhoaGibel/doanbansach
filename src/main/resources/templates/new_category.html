@@ -4,25 +4,55 @@
     <meta charset="UTF-8">
     <title>Thêm Danh Mục Mới</title>
 
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" th-href="@{/css/admin.css}">
+    <link rel="stylesheet" th-href="@{/css/headerandfooter.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        .form-container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .form-container { max-width: 600px; margin: 50px auto 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .form-container input[type="text"], .form-container textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        .form-container button { padding: 10px 20px; background-color: #343a40; color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+        /* Style cho nút Lưu */
+        .btn-submit {
+            padding: 10px 20px; background-color: #343a40; color: white;
+            border: none; border-radius: 4px; cursor: pointer;
+        }
+
+        /* Style cho nút Quay lại (link) */
+        .btn-cancel-link {
+            padding: 10px 20px;
+            background-color: #f4f4f4;
+            color: #343a40;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none; /* Loại bỏ gạch chân của link */
+            line-height: 1.2; /* Giúp căn chỉnh chiều cao với nút submit */
+            align-self: center;
+        }
+
+        /* QUAN TRỌNG: Khối Action để căn chỉnh */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end; /* Căn nội dung sang phải */
+            gap: 8px; /* ĐÃ SỬA: 8px spacing (gần 5mm) */
+            margin-top: 20px;
+        }
+
         .error-message { color: red; font-size: 0.9em; margin-bottom: 10px; display: block; text-align: left; }
         .alert-danger { background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .alert-success { background-color: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-<div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
+<div th-replace="~{fragments/admin-nav :: adminHeader}"></div>
 
 <main class="form-container">
     <h2>Thêm Danh Mục Mới</h2>
 
     <div th-if="${error}" class="alert alert-danger" th-text="${error}"></div>
+    <div th-if="${success}" class="alert alert-success" th-text="${success}"></div>
+
 
     <form th-action="@{/categories}" th-object="${category}" method="post">
 
@@ -33,8 +63,10 @@
         <label for="category-desc">Mô Tả:</label>
         <textarea id="category-desc" th-field="*{description}" rows="3"></textarea>
 
-        <button type="submit">Lưu Danh Mục</button>
-        <a th-href="@{/categories}" style="margin-left: 15px;">Quay lại Danh sách</a>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Lưu Danh Mục</button>
+            <a th-href="@{/categories}" class="btn-cancel-link">Quay lại</a>
+        </div>
     </form>
 </main>
 

@@ -4,7 +4,7 @@ import com.example.doanbansach.Entity.Category;
 import com.example.doanbansach.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Thêm import này
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +26,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional // THÊM: Đánh dấu giao dịch
+    @Transactional
     public Category saveCategory(Category category) {
         String name = category.getName().trim();
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Tên danh mục không được để trống!");
         }
+        // Kiểm tra trùng lặp
         if (categoryRepository.existsByNameIgnoreCase(name)) {
+            // Ném ra RuntimeException để Controller bắt và hiển thị lỗi
             throw new RuntimeException("Danh mục '" + name + "' đã tồn tại!");
         }
         category.setName(name);
@@ -40,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional // THÊM: Đánh dấu giao dịch
+    @Transactional
     public Category updateCategory(Long id, Category categoryDetails) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại: " + id));
@@ -61,16 +63,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional // THÊM: Đánh dấu giao dịch
+    @Transactional
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại: " + id));
 
-        // CHÚ Ý: Đảm bảo bạn đang chạy trong transaction để access getBooks()
-        if (category.getBooks() != null && !category.getBooks().isEmpty()) {
-            throw new RuntimeException("Không thể xóa danh mục '" + category.getName() +
-                    "' vì đang có " + category.getBooks().size() + " sách!");
-        }
+        // Nếu bạn đã có ràng buộc khóa ngoại (Foreign Key), dòng này sẽ là đủ
         categoryRepository.delete(category);
     }
 }
