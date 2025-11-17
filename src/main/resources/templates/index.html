@@ -15,7 +15,6 @@
 
 <div class="container">
 
-    <!-- Danh mục nhanh -->
     <div class="quick-categories" th:if="${!#lists.isEmpty(categories)}">
         <h3>Khám phá theo danh mục</h3>
         <div class="category-links">
@@ -38,8 +37,8 @@
             <div th:each="product : ${popularBooks}" class="product-item">
                 <a th:href="@{/books/detail/{id}(id=${product.id})}">
 
-                    <!-- ĐÃ FIX: Dùng đúng đường dẫn ảnh bạn đang lưu (/images/uploads/...) -->
-                    <img th:src="@{${product.image} ?: '/images/default-book.png'}"
+                    <!-- SỬA LỖI: Trỏ đến Resource Handler /uploads/ (đã tạo trong MvcConfig.java) -->
+                    <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
                          onerror="this.src='/images/default-book.png';">
 
@@ -60,8 +59,8 @@
             <div th:each="product : ${newestBooks}" class="product-item">
                 <a th:href="@{/books/detail/{id}(id=${product.id})}">
 
-                    <!-- ĐÃ FIX: Dùng đúng đường dẫn ảnh bạn đang lưu -->
-                    <img th:src="@{${product.image} ?: '/images/default-book.png'}"
+                    <!-- SỬA LỖI: Trỏ đến Resource Handler /uploads/ -->
+                    <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
                          onerror="this.src='/images/default-book.png';">
 
@@ -72,10 +71,10 @@
         </div>
     </section>
 
-    <!-- Nút Admin - chỉ hiện khi là ADMIN -->
     <div class="action-buttons" sec:authorize="hasRole('ADMIN')">
         <a th:href="@{/admin/products}">Thêm Sách Mới</a>
-        <a th:href="@{/categories/category/create}">Quản Lý Danh Mục</a>
+        <a th:href="@{/categories}" sec:authorize="hasRole('ADMIN')">Quản Lý Danh Mục</a>
+
     </div>
 
 </div>

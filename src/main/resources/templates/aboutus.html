@@ -1,9 +1,10 @@
+about us :
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vcrons - About Us</title>
+    <title>Vanlangbook - About Us</title>
 
     <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
     <link rel="stylesheet" th:href="@{/css/aboutus.css}">
@@ -16,15 +17,56 @@
 
 <div th:replace="~{fragments/header :: header-nav}"></div>
 
-<section class="about-us">
-    <h2>Vcrons</h2>
-    <p>Chúng tôi là Vcrons, một thương hiệu chuyên cung cấp các sản phẩm thời trang với chất lượng cao và giá thành hợp lý.</p>
-    <p>Với sứ mệnh mang đến cho khách hàng những sản phẩm tốt nhất, chúng tôi không ngừng cải thiện và phát triển để phục vụ khách hàng một cách tốt nhất.</p>
-    <p>Hãy khám phá các sản phẩm và dịch vụ của chúng tôi để trải nghiệm sự khác biệt.</p>
+<section class="about-us" style="padding: 0 5%;">
+    <div class="hero-section">
+        <h1>Vanlangbook - Nơi Kiến Thức Gặp Gỡ Đam Mê</h1>
+        <p class="hero-text">Khám phá thế giới sách với chúng tôi, nơi mỗi trang sách là một hành trình mới.</p>
+    </div>
 
-    <div class="mission">
-        <h3>Sứ Mệnh</h3>
-        <p>Vcrons cam kết cung cấp sản phẩm với chất lượng vượt trội, đổi mới không ngừng, và đem đến trải nghiệm tuyệt vời cho khách hàng của mình.</p>
+    <div class="about-content">
+        <h2>Giới Thiệu Về Vanlangbook</h2>
+        <div class="intro-grid">
+            <div class="intro-card">
+                <i class="fas fa-book-open"></i>
+                <h3>Sách Hay, Giá Hợp Lý</h3>
+                <p>Chúng tôi là Vanlangbook, một thương hiệu chuyên cung cấp các cuốn sách hay với chất lượng cao và giá thành hợp lý. Từ tiểu thuyết kinh điển đến sách phát triển bản thân, chúng tôi mang đến sự đa dạng để phù hợp với mọi lứa tuổi và sở thích.</p>
+            </div>
+            <div class="intro-card">
+                <i class="fas fa-heart"></i>
+                <h3>Đam Mê Đọc Sách</h3>
+                <p>Chúng tôi không ngừng cải thiện và phát triển để mang đến cho khách hàng những cuốn sách tốt nhất, phục vụ một cách tận tâm nhất. Với đội ngũ yêu sách, chúng tôi chọn lọc những tác phẩm chất lượng để truyền cảm hứng cho bạn.</p>
+            </div>
+            <div class="intro-card">
+                <i class="fas fa-users"></i>
+                <h3>Cộng Đồng Độc Giả</h3>
+                <p>Hãy khám phá bộ sưu tập sách và dịch vụ của chúng tôi để trải nghiệm sự khác biệt. Tham gia cộng đồng độc giả của Vanlangbook, nơi bạn có thể chia sẻ cảm nhận và nhận gợi ý sách cá nhân hóa.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h2>Lịch Sử Hình Thành</h2>
+        <p>Ra đời từ niềm đam mê đọc sách của những người sáng lập, Vanlangbook bắt đầu hành trình vào năm 2020 với một cửa hàng nhỏ tại Hà Nội. Ngày nay, chúng tôi đã mở rộng thành nền tảng trực tuyến hàng đầu, phục vụ hàng ngàn độc giả trên toàn quốc. Mỗi bước đi đều hướng tới mục tiêu: Làm cho việc đọc sách trở nên dễ dàng và thú vị hơn bao giờ hết.</p>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="year-badge" style="margin-bottom: 15px;">2020</div>
+                <p>Thành lập Vanlangbook - Cửa hàng sách đầu tiên.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="year-badge" style="margin-bottom: 15px;">2022</div>
+                <p>Ra mắt nền tảng trực tuyến với hơn 10.000 đầu sách.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="year-badge" style="margin-bottom: 15px;">2025</div>
+                <p>Mở rộng dịch vụ giao hàng toàn quốc và chương trình khách hàng thân thiết.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <h2>Sẵn Sàng Khám Phá?</h2>
+        <p>Tham gia cùng Vanlangbook ngay hôm nay và nhận ưu đãi đặc biệt cho đơn hàng đầu tiên!</p>
+        <a href="/" class="cta-button">Khám Phá Sách Ngay</a>
     </div>
 </section>
 

@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Configuration
@@ -16,11 +15,14 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Đường dẫn URL mà trình duyệt sẽ gọi
         String urlPath = "/uploads/**";
 
-        // Đường dẫn tuyệt đối đến thư mục trên ổ cứng (phải có "file:")
-        String physicalPath = "file:" + Paths.get(uploadDir).toAbsolutePath().toString() + "/";
+        // Chuyển đường dẫn của bạn sang định dạng tuyệt đối
+        String absolutePath = Paths.get(uploadDir).toAbsolutePath().toString();
+        String physicalPath = "file:/" + absolutePath.replace("\\", "/") + "/"; // Sửa lỗi path Windows
+
+        // THÊM DÒNG NÀY ĐỂ DEBUG
+        System.out.println("DEBUG: Physical Image Path being served: " + physicalPath);
 
         registry.addResourceHandler(urlPath)
                 .addResourceLocations(physicalPath);
