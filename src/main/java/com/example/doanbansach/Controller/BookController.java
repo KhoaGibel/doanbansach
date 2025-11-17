@@ -103,16 +103,13 @@ public class BookController {
         }
     }
 
-    // SỬA LỖI VALIDATION (PHƯƠNG THỨC SAVE)
     @PostMapping("/books")
     public String saveBook(
             @Valid @ModelAttribute("book") Book book,
             BindingResult bindingResult,
-            // 1. XÓA: @RequestParam(value = "categoryId")
             @RequestParam("imageFile") MultipartFile imageFile,
-            RedirectAttributes redirectAttributes) { // Xóa Model model
+            RedirectAttributes redirectAttributes) {
 
-        // 2. KIỂM TRA THỦ CÔNG: Kiểm tra xem Category ID có được gửi lên không
         if (book.getCategory() == null || book.getCategory().getId() == null) {
             bindingResult.rejectValue("category", "error.book", "Vui lòng chọn một danh mục.");
         }
@@ -125,10 +122,9 @@ public class BookController {
         }
 
         try {
-            // 3. TẢI LẠI CATEGORY: Tải đối tượng Category đầy đủ từ ID
             Category category = categoryService.getCategoryById(book.getCategory().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
-            book.setCategory(category); // Gán lại đối tượng đầy đủ vào sách
+            book.setCategory(category);
 
             bookService.addBook(book, imageFile);
             redirectAttributes.addFlashAttribute("success", "Thêm sách thành công!");
@@ -155,18 +151,15 @@ public class BookController {
         }
     }
 
-    // SỬA LỖI VALIDATION (PHƯƠNG THỨC UPDATE)
     @PostMapping("/books/{id}")
     public String updateBook(
             @PathVariable Long id,
             @Valid @ModelAttribute("book") Book bookDetails,
             BindingResult bindingResult,
-            // 1. XÓA: @RequestParam(value = "categoryId")
             @RequestParam("imageFile") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // 2. KIỂM TRA THỦ CÔNG:
         if (bookDetails.getCategory() == null || bookDetails.getCategory().getId() == null) {
             bindingResult.rejectValue("category", "error.book", "Vui lòng chọn một danh mục.");
         }
@@ -177,7 +170,6 @@ public class BookController {
         }
 
         try {
-            // 3. TẢI LẠI CATEGORY:
             Category category = categoryService.getCategoryById(bookDetails.getCategory().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
             bookDetails.setCategory(category);
@@ -263,102 +255,8 @@ public class BookController {
         }
     }
 
-    @GetMapping("/add-to-cart/{id}")
-    public String addToCart(@PathVariable Long id,
-                            @RequestParam(defaultValue = "1") int quantity,
-                            RedirectAttributes ra) {
-        try {
-            cartService.add(id, quantity);
-            ra.addFlashAttribute("success", "Đã thêm vào giỏ hàng!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
-        }
-        return "redirect:/books";
-    }
-
-    @GetMapping("/cart")
-    public String viewCart(Model model) {
-        try {
-            model.addAttribute("cartItems", getCartItemsWithQuantity());
-            model.addAttribute("total", calculateTotal());
-            model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "cart";
-        } catch (Exception e) {
-            model.addAttribute("error", "Lỗi tải giỏ hàng: " + e.getMessage());
-            return "cart";
-        }
-    }
-
-    @GetMapping("/remove-from-cart/{id}")
-    public String removeFromCart(@PathVariable Long id, RedirectAttributes ra) {
-        try {
-            cartService.remove(id);
-            ra.addFlashAttribute("success", "Đã xóa khỏi giỏ!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi xóa: " + e.getMessage());
-        }
-        return "redirect:/cart";
-    }
-
-    @GetMapping("/clear-cart")
-    public String clearCart(RedirectAttributes ra) {
-        try {
-            cartService.clear();
-            ra.addFlashAttribute("success", "Đã xóa toàn bộ giỏ!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi xóa giỏ: " + e.getMessage());
-        }
-        return "redirect:/cart";
-    }
-
-    @GetMapping("/checkout")
-    public String showCheckoutForm(Model model, RedirectAttributes ra) {
-        if (cartService.getCart().isEmpty()) {
-            ra.addFlashAttribute("error", "Giỏ hàng của bạn đang trống!");
-            return "redirect:/cart";
-        }
-
-        model.addAttribute("cartItems", getCartItemsWithQuantity());
-        model.addAttribute("total", calculateTotal());
-
-        return "checkout";
-    }
-
-    @PostMapping("/place-order")
-    public String placeOrder(
-            @RequestParam("customerName") String customerName,
-            @RequestParam("shippingAddress") String shippingAddress,
-            RedirectAttributes ra) {
-
-        if (cartService.getCart().isEmpty()) {
-            ra.addFlashAttribute("error", "Không thể đặt hàng vì giỏ hàng trống!");
-            return "redirect:/cart";
-        }
-
-        try {
-            Long newOrderId = orderService.createOrder(
-                    getCartItemsWithQuantity(),
-                    customerName,
-                    shippingAddress
-            );
-
-            cartService.clear();
-
-            ra.addFlashAttribute("success", "Đặt hàng thành công! Mã đơn hàng của bạn là #" + newOrderId);
-            return "redirect:/order-success/" + newOrderId;
-
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi đặt hàng: " + e.getMessage());
-            e.printStackTrace();
-            return "redirect:/checkout";
-        }
-    }
-
-    @GetMapping("/order-success/{id}")
-    public String orderSuccess(@PathVariable Long id, Model model) {
-        model.addAttribute("orderId", id);
-        return "order_success";
-    }
+    // ĐÃ XÓA HÀM addToCart Ở ĐÂY – KHÔNG ĐỂ TRÙNG VỚI CartController NỮA!
+    // Giờ chỉ để CartController xử lý /add-to-cart/{id}
 
     @GetMapping("/aboutus")
     public String showAboutUsPage() {
@@ -385,6 +283,7 @@ public class BookController {
         return items;
     }
 
+    // calculateTotal() vẫn giữ để dùng ở các trang khác nếu cần
     private double calculateTotal() {
         return getCartItemsWithQuantity().stream()
                 .mapToDouble(item -> item.book().getPrice() * item.quantity())
