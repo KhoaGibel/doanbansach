@@ -32,8 +32,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF để đơn giản hóa quá trình test
                 .authorizeHttpRequests(authorize -> authorize
 
+                        // === TẠM THỜI: CHO PHÉP TRUY CẬP /admin/** ĐỂ TEST DASHBOARD ===
+                        .requestMatchers("/admin", "/admin/**").permitAll()
+                        // ============================================================
+
                         // 1. CHỈ ADMIN MỚI ĐƯỢC VÀO
-                        .requestMatchers("/admin/**", "/categories/**", "/books/new", "/books/edit/**", "/books/delete/**")
+                        .requestMatchers("/categories/**", "/books/new", "/books/edit/**", "/books/delete/**")
                         .hasRole("ADMIN")
 
                         // 2. CHỈ CẦN ĐĂNG NHẬP (BƯỚC THANH TOÁN QUAN TRỌNG)
@@ -41,7 +45,7 @@ public class SecurityConfig {
                         .authenticated()
 
                         // 3. TẤT CẢ CÁC ĐỊA CHỈ CÒN LẠI ĐỀU LÀ CÔNG KHAI (PUBLIC)
-                        .anyRequest().permitAll() // <-- ĐÂY LÀ SỰ THAY ĐỔI QUAN TRỌNG NHẤT
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
