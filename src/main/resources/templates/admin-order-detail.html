@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Chi Tiết Đơn Hàng #' + ${order.id}">Chi Tiết Đơn Hàng</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .detail-card { max-width: 900px; margin: 40px auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .detail-card h3 { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; color: #343a40; }
+        .info-group { margin-bottom: 20px; }
+        .info-group label { font-weight: bold; color: #6c757d; display: block; margin-bottom: 5px; }
+        .info-group span { font-size: 1.1em; color: #333; }
+        .item-list { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .item-list th, .item-list td { padding: 10px; border: 1px solid #eee; text-align: left; }
+        .item-list th { background-color: #f8f9fa; }
+        .item-img { width: 40px; height: 50px; object-fit: cover; border-radius: 4px; }
+        .total-row td { font-weight: bold; background-color: #f1f1f1; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
+
+<main class="admin-section">
+    <div class="container">
+        <h2><i class="fas fa-file-invoice"></i> Chi Tiết Đơn Hàng #<span th:text="${order.id}"></span></h2>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="detail-card">
+
+            <div class="info-group">
+                <label>Trạng Thái Hiện Tại:</label>
+                <span class="status-badge"
+                      th:classappend="'status-' + ${order.status}"
+                      th:text="${order.status}">CHỜ XỬ LÝ</span>
+            </div>
+
+            <h3>Thông Tin Khách Hàng</h3>
+            <div class="info-group">
+                <label>Tên Khách Hàng:</label>
+                <span th:text="${order.customerName}"></span>
+            </div>
+            <div class="info-group">
+                <label>Số Điện Thoại:</label>
+                <span th:text="${order.phone}"></span>
+            </div>
+            <div class="info-group">
+                <label>Địa Chỉ Giao Hàng:</label>
+                <span th:text="${order.shippingAddress}"></span>
+            </div>
+            <div class="info-group">
+                <label>Phương Thức Thanh Toán:</label>
+                <span th:text="${order.paymentMethod}"></span>
+            </div>
+
+            <h3>Danh Sách Sản Phẩm</h3>
+            <table class="item-list">
+                <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên Sách</th>
+                    <th>Số Lượng</th>
+                    <th>Đơn Giá</th>
+                    <th>Thành Tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail : ${details}">
+                    <td><img th:src="@{/uploads/{imgName}(imgName=${detail.book.image})}" class="item-img" onerror="this.src='/images/default-book.png';"></td>
+                    <td th:text="${detail.book.title}">Tên sách</td>
+                    <td th:text="${detail.quantity}">2</td>
+                    <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">100,000 ₫</td>
+                    <td th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'">200,000 ₫</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align: right;">Tổng Cộng:</td>
+                    <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'">550,000 ₫</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 30px;">
+                <a th:href="@{/admin/orders/edit/{id}(id=${order.id})}" class="btn" style="background-color: #007bff;">
+                    <i class="fas fa-edit"></i> Chỉnh Sửa Trạng Thái
+                </a>
+                <a th:href="@{/admin/orders}" class="btn" style="background-color: #6c757d;">
+                    <i class="fas fa-arrow-left"></i> Quay Lại Danh Sách
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

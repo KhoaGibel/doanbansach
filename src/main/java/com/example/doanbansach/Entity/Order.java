@@ -87,4 +87,11 @@ public class Order {
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;
     }
+
+    public void setPhone(String phone) {
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+
+    }
 }

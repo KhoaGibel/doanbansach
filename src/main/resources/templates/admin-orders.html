@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Đơn Hàng - VanlangBooks Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/headerandfooter.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .order-table th { background-color: #343a40; color: white; }
+        .order-table td { font-size: 0.95em; }
+        .total-col { font-weight: bold; color: #e17055; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+        .status-pending { background-color: #ffc107; color: #333; }
+        .status-completed { background-color: #28a745; color: white; }
+        .status-canceled { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
+
+<main class="admin-section">
+    <div class="container">
+        <h2><i class="fas fa-receipt"></i> Danh Sách Đơn Hàng</h2>
+
+        <div th:if="${allOrders != null and !allOrders.isEmpty()}">
+            <table class="data-table order-table">
+                <thead>
+                <tr>
+                    <th>ID Đơn hàng</th>
+                    <th>Tên Khách hàng</th>
+                    <th>Địa Chỉ Giao Hàng</th>
+                    <th>SĐT</th>
+                    <th>PT Thanh toán</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày đặt</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${allOrders}">
+                    <td th:text="${order.id}">#1001</td>
+                    <td th:text="${order.customerName}">Nguyễn Văn A</td>
+                    <td th:text="${order.shippingAddress}">123 Đường Bến Vân Đồn</td>
+                    <td th:text="${order.phone}">0901xxxxxx</td>
+                    <td th:text="${order.paymentMethod}">COD</td>
+                    <td class="total-col" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'">550,000 ₫</td>
+                    <td><span class="status-badge status-pending" th:text="${order.status}">PENDING</span></td>
+                    <td th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}">20-11-2025</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:unless="${allOrders != null and !allOrders.isEmpty()}" style="padding: 40px; text-align: center;">
+            <p>Hiện chưa có đơn hàng nào được đặt.</p>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

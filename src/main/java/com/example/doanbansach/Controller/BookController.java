@@ -181,7 +181,6 @@ public class BookController {
         }
     }
 
-    // ĐÃ FIX HOÀN CHỈNH – TÌM KIẾM DÙNG CHUNG FILE books.html ĐẸP NHẤT!
     @GetMapping("/search")
     public String searchBooks(@RequestParam("keyword") String keyword, Model model) {
         List<Book> searchResults = bookService.searchBooks(keyword.trim());
@@ -204,28 +203,34 @@ public class BookController {
             model.addAttribute("message", "Không tìm thấy sách nào với từ khóa: '" + keyword.trim() + "'");
         }
 
-        return "books"; // DÙNG CHUNG FILE books.html – ĐẸP LUNG LINH!
+        return "books";
     }
 
+    // PHƯƠNG THỨC BẠN YÊU CẦU: Hiển thị sách theo Category ID
     @GetMapping("/category/{id}")
     public String viewBooksByCategory(@PathVariable Long id, Model model, RedirectAttributes ra) {
         try {
             Category category = categoryService.getCategoryById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
+
             List<Book> books = bookService.getBooksByCategory(id);
             List<Category> categories = getSafeList(categoryService.getAllCategories());
+
+            // Tính số lượng sách cho từng Category (dùng cho sidebar)
             Map<Long, Long> categoryCounts = new HashMap<>();
             for (Category cat : categories) {
                 Long count = bookService.countBooksByCategory(cat.getId());
                 categoryCounts.put(cat.getId(), count != null ? count : 0L);
             }
+
             model.addAttribute("books", getSafeList(books));
             model.addAttribute("category", category);
             model.addAttribute("categories", categories);
             model.addAttribute("categoryCounts", categoryCounts);
-            model.addAttribute("cartItems", getCartItemsWithQuantity());
+            model.addAttribute("cartItems", getCartItemsWithDetails()); // SỬA: Dùng hàm getCartItemsWithDetails đã fix
             model.addAttribute("pageTitle", "Danh mục: " + category.getName());
-            return "books";
+
+            return "books"; // Trả về file books.html (Card View)
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Lỗi tải danh mục: " + e.getMessage());
             return "redirect:/books";
@@ -237,11 +242,12 @@ public class BookController {
         return "aboutus";
     }
 
-    // --- HỖ TRỢ ---
+    // --- CÁC HÀM HỖ TRỢ ---
     private <T> List<T> getSafeList(List<T> list) {
         return list != null ? list : List.of();
     }
 
+    // HÀM NÀY PHẢI ĐƯỢC CHUYỂN HOẶC GỌI TỪ CartController
     private List<CartItem> getCartItemsWithQuantity() {
         List<CartItem> items = new ArrayList<>();
         Map<Long, Integer> cartMap = cartService.getCart();
@@ -250,6 +256,23 @@ public class BookController {
             bookService.getBookById(entry.getKey()).ifPresent(book ->
                     items.add(new CartItem(book, entry.getValue()))
             );
+        }
+        return items;
+    }
+
+    // SỬA: Hàm hỗ trợ cho viewBooksByCategory (lấy chi tiết sách từ ID trong giỏ)
+    private List<CartItem> getCartItemsWithDetails() {
+        List<CartItem> items = new ArrayList<>();
+        Map<Long, Integer> cartMap = cartService.getCart();
+        if (cartMap == null) return items;
+
+        for (Map.Entry<Long, Integer> entry : cartMap.entrySet()) {
+            Long bookId = entry.getKey();
+            Integer quantity = entry.getValue();
+
+            bookService.getBookById(bookId).ifPresent(book -> {
+                items.add(new CartItem(book, quantity));
+            });
         }
         return items;
     }

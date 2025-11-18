@@ -2,7 +2,7 @@ package com.example.doanbansach.Controller;
 
 import com.example.doanbansach.Entity.Order;
 import com.example.doanbansach.service.OrderService;
-import com.example.doanbansach.service.CartService;
+import com.example.doanbansach.service.CartService; // Cần thiết
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,18 +18,14 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired(required = false)
-    private CartService cartService;
-
-    // ĐÃ XÓA HOẶC COMMENT DÒNG NÀY ĐỂ TRÁNH LỖI AMBIGUOUS
-    // @GetMapping
-    // public String showAdminDashboard() { return "admin"; }
+    // Giả định OrderService có hàm getAllOrders() và getOrderById()
 
     // Danh sách đơn hàng
     @GetMapping("/orders")
     public String listAllOrders(Model model) {
+        // Giả định OrderService có hàm getAllOrders
         model.addAttribute("orders", orderService.getAllOrders());
-        return "admin/order_list";
+        return "admin-orders"; // → templates/admin-orders.html
     }
 
     // Chi tiết đơn hàng
@@ -39,7 +35,9 @@ public class OrderController {
             Order order = orderService.getOrderById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Đơn hàng không tồn tại: " + id));
             model.addAttribute("order", order);
-            return "admin/order_detail";
+            // Giả định OrderService có hàm getOrderDetails(id)
+            model.addAttribute("details", orderService.getOrderDetails(id));
+            return "admin-order-detail"; // → templates/admin-order-detail.html
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
             return "redirect:/admin/orders";
@@ -53,7 +51,7 @@ public class OrderController {
                 .orElseThrow(() -> new IllegalArgumentException("ID đơn hàng không tồn tại: " + id));
         model.addAttribute("order", order);
         model.addAttribute("statuses", List.of("CHỜ_XỬ_LÝ", "ĐANG_GIAO", "HOÀN_TẤT", "ĐÃ_HỦY"));
-        return "admin/edit_order";
+        return "admin-edit-order"; // → templates/admin-edit-order.html
     }
 
     // Cập nhật trạng thái
@@ -62,6 +60,7 @@ public class OrderController {
                                     @RequestParam("status") String newStatus,
                                     RedirectAttributes ra) {
         try {
+            // Giả định OrderService có hàm updateOrderStatus
             orderService.updateOrderStatus(id, newStatus);
             ra.addFlashAttribute("success", "Cập nhật trạng thái đơn hàng #" + id + " thành công!");
         } catch (Exception e) {

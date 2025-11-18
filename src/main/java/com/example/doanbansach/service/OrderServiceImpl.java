@@ -23,8 +23,12 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailRepository orderDetailRepository;
 
     @Override
-    @Transactional // Đảm bảo tất cả cùng thành công hoặc thất bại
-    public Long createOrder(List<CartItem> cartItems, String customerName, String shippingAddress) {
+    @Transactional
+    public Long createOrder(List<CartItem> cartItems,
+                            String customerName,
+                            String shippingAddress,
+                            String phone, // THÊM
+                            String paymentMethod) throws Exception { // THÊM
 
         // 1. Tạo đối tượng Order
         Order order = new Order();
@@ -32,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingAddress(shippingAddress);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("CHỜ_XỬ_LÝ");
+        order.setPhone(phone); // LƯU SỐ ĐIỆN THOẠI
+        order.setPaymentMethod(paymentMethod); // LƯU PHƯƠNG THỨC THANH TOÁN
 
         // Tính tổng tiền
         double totalPrice = cartItems.stream()
@@ -56,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder.getId();
     }
 
-    // === Các phương thức quản lý (cho OrderController sau này) ===
+    // === Các phương thức quản lý (giữ nguyên) ===
 
     @Override
     public List<Order> getAllOrders() {
@@ -67,6 +73,14 @@ public class OrderServiceImpl implements OrderService {
     public Optional<Order> getOrderById(Long id) {
         return orderRepository.findById(id);
     }
+
+    // THÊM: Giả định có phương thức lấy chi tiết đơn hàng
+    @Override
+    public List<OrderDetail> getOrderDetails(Long orderId) {
+        // Giả định bạn có hàm findByOrderId trong OrderDetailRepository
+        return orderDetailRepository.findByOrderId(orderId);
+    }
+
 
     @Override
     @Transactional
