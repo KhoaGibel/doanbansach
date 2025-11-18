@@ -29,46 +29,44 @@ public class BookController {
     private CategoryService categoryService;
 
     @Autowired
-    private CartService cartService;
+    private CartService cartService; // Vẫn cần để lấy thông tin cho header
 
     @Autowired
-    private OrderService orderService;
+    private OrderService orderService; // Vẫn cần cho các hàm checkout
 
     @GetMapping("/")
     public String viewHomePage(Model model) {
+        // ... (Code này đã đúng) ...
         List<Book> allBooks = bookService.getAllBooks();
         List<Category> categories = getSafeList(categoryService.getAllCategories());
-
         Map<Long, Long> categoryCounts = new HashMap<>();
         for (Category cat : categories) {
             Long count = bookService.countBooksByCategory(cat.getId());
             categoryCounts.put(cat.getId(), count != null ? count : 0L);
         }
-
         model.addAttribute("allBooks", allBooks);
         model.addAttribute("categories", categories);
         model.addAttribute("categoryCounts", categoryCounts);
         model.addAttribute("cartItems", getCartItemsWithQuantity());
         model.addAttribute("newestBooks", bookService.getNewestBooks());
         model.addAttribute("popularBooks", bookService.getTopPopularBooks());
-
         return "index";
     }
 
     @GetMapping("/admin/products")
     public String showAdminProductsPage(Model model) {
+        // ... (Code này đã đúng) ...
         model.addAttribute("allBooks", bookService.getAllBooks());
         model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-
         if (!model.containsAttribute("book")) {
             model.addAttribute("book", new Book());
         }
-
         return "admin-products";
     }
 
     @GetMapping("/books")
     public String viewBooksList(@RequestParam(required = false) String filter, Model model) {
+        // ... (Code này đã đúng) ...
         try {
             List<Book> books;
             if ("newest".equals(filter)) {
@@ -78,20 +76,17 @@ public class BookController {
             } else {
                 books = bookService.getAllBooks();
             }
-
             List<Category> categories = getSafeList(categoryService.getAllCategories());
             Map<Long, Long> categoryCounts = new HashMap<>();
             for (Category cat : categories) {
                 Long count = bookService.countBooksByCategory(cat.getId());
                 categoryCounts.put(cat.getId(), count != null ? count : 0L);
             }
-
             model.addAttribute("books", getSafeList(books));
             model.addAttribute("categories", categories);
             model.addAttribute("categoryCounts", categoryCounts);
             model.addAttribute("cartItems", getCartItemsWithQuantity());
             model.addAttribute("currentFilter", filter);
-
             return "books";
         } catch (Exception e) {
             model.addAttribute("error", "Lỗi tải danh sách sách: " + e.getMessage());
@@ -109,23 +104,20 @@ public class BookController {
             BindingResult bindingResult,
             @RequestParam("imageFile") MultipartFile imageFile,
             RedirectAttributes redirectAttributes) {
-
+        // ... (Code này đã đúng) ...
         if (book.getCategory() == null || book.getCategory().getId() == null) {
             bindingResult.rejectValue("category", "error.book", "Vui lòng chọn một danh mục.");
         }
-
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.book", bindingResult);
             redirectAttributes.addFlashAttribute("book", book);
             redirectAttributes.addFlashAttribute("error", "Lỗi: Vui lòng kiểm tra lại thông tin sách.");
             return "redirect:/admin/products";
         }
-
         try {
             Category category = categoryService.getCategoryById(book.getCategory().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
             book.setCategory(category);
-
             bookService.addBook(book, imageFile);
             redirectAttributes.addFlashAttribute("success", "Thêm sách thành công!");
             return "redirect:/admin/products";
@@ -137,6 +129,7 @@ public class BookController {
         }
     }
 
+    // SỬA LỖI ĐƯỜNG DẪN (do bạn không dùng thư mục /admin/):
     @GetMapping("/books/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
         try {
@@ -144,13 +137,16 @@ public class BookController {
                     .orElseThrow(() -> new IllegalArgumentException("ID sách không tồn tại: " + id));
             model.addAttribute("book", book);
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "edit_book"; // Sửa: Trỏ về edit_book.html
+
+            // Trả về "edit_book.html" (nằm trong /templates/)
+            return "edit_book";
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
             return "redirect:/admin/products";
         }
     }
 
+    // SỬA LỖI ĐƯỜNG DẪN:
     @PostMapping("/books/{id}")
     public String updateBook(
             @PathVariable Long id,
@@ -166,7 +162,9 @@ public class BookController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
-            return "edit_book";   // Sửa: Trỏ về edit_book.html
+
+            // Trả về "edit_book.html" khi có lỗi
+            return "edit_book";
         }
 
         try {
@@ -182,12 +180,13 @@ public class BookController {
             model.addAttribute("error", "Lỗi cập nhật sách: " + e.getMessage());
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
             e.printStackTrace();
-            return "edit_book";   // Sửa: Trỏ về edit_book.html
+            return "edit_book"; // Trả về "edit_book.html" khi có lỗi
         }
     }
 
     @GetMapping("/books/delete/{id}")
     public String deleteBook(@PathVariable Long id, RedirectAttributes ra) throws IOException {
+        // ... (Code này đã đúng) ...
         try {
             bookService.deleteBook(id);
             ra.addFlashAttribute("success", "Xóa sách thành công!");
@@ -199,12 +198,11 @@ public class BookController {
 
     @GetMapping("/books/detail/{id}")
     public String viewBookDetail(@PathVariable Long id, Model model, RedirectAttributes ra) {
+        // ... (Code này đã đúng) ...
         try {
             Book book = bookService.getBookById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Sách không tồn tại: " + id));
-
             bookService.incrementPopularCount(id);
-
             model.addAttribute("book", book);
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
             model.addAttribute("cartItems", getCartItemsWithQuantity());
@@ -217,13 +215,13 @@ public class BookController {
 
     @GetMapping("/search")
     public String searchBooks(@RequestParam("keyword") String keyword, Model model) {
+        // ... (Code này đã đúng) ...
         try {
             List<Book> searchResults = bookService.searchBooks(keyword.trim());
             model.addAttribute("books", getSafeList(searchResults));
             model.addAttribute("keyword", keyword.trim());
             model.addAttribute("categories", getSafeList(categoryService.getAllCategories()));
             model.addAttribute("cartItems", getCartItemsWithQuantity());
-
             if (searchResults.isEmpty()) {
                 model.addAttribute("message", "Không tìm thấy sách nào với từ khóa: '" + keyword.trim() + "'");
             }
@@ -239,10 +237,10 @@ public class BookController {
 
     @GetMapping("/category/{id}")
     public String viewBooksByCategory(@PathVariable Long id, Model model, RedirectAttributes ra) {
+        // ... (Code này đã đúng) ...
         try {
             Category category = categoryService.getCategoryById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Danh mục không tồn tại"));
-
             List<Book> books = bookService.getBooksByCategory(id);
             model.addAttribute("books", getSafeList(books));
             model.addAttribute("category", category);
@@ -256,7 +254,7 @@ public class BookController {
         }
     }
 
-    // SỬA LỖI: ĐÃ XÓA HÀM addToCart() GÂY TRÙNG LẶP
+    // SỬA LỖI CRASH: XÓA BỎ HÀM GÂY TRÙNG LẶP
     // @GetMapping("/add-to-cart/{id}") ...
 
     @GetMapping("/aboutus")
@@ -264,18 +262,17 @@ public class BookController {
         return "aboutus";
     }
 
+    // --- CÁC HÀM HỖ TRỢ ---
     private <T> List<T> getSafeList(List<T> list) {
         return list != null ? list : List.of();
     }
 
     private List<CartItem> getCartItemsWithQuantity() {
         List<CartItem> items = new ArrayList<>();
-        Map<Long, Integer> cartMap = cartService.getCart();
-
+        Map<Long, Integer> cartMap = cartService.getCart(); // Lấy từ CartService
         if (cartMap == null) {
             return items;
         }
-
         for (Map.Entry<Long, Integer> entry : cartMap.entrySet()) {
             bookService.getBookById(entry.getKey()).ifPresent(book -> {
                 items.add(new CartItem(book, entry.getValue()));

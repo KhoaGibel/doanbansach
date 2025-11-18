@@ -9,18 +9,57 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" th:href="@{/asset/img/logo/favicon.ico}" type="image/x-icon">
     <style>
+        /* CSS cho form */
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
         }
-        .checkbox-group input {
-            width: auto;
+        .checkbox-group input { width: auto; }
+
+        /* --- SỬA LỖI GIAO DIỆN NÚT (QUAN TRỌNG) --- */
+        .data-table td {
+            vertical-align: middle; /* Căn giữa nội dung ô */
+        }
+        /* Container chứa các nút hành động */
+        .action-buttons-cell {
+            display: flex;      /* Sử dụng Flexbox để xếp ngang */
+            gap: 8px;           /* Khoảng cách giữa 2 nút */
+            justify-content: center; /* Căn giữa các nút */
+        }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap; /* Không cho xuống dòng */
+        }
+        .edit-btn {
+            background-color: #007bff; /* Màu xanh */
+        }
+        .edit-btn:hover { background-color: #0056b3; }
+
+        .delete-btn {
+            background-color: #dc3545; /* Màu đỏ */
+        }
+        .delete-btn:hover { background-color: #c82333; }
+
+        /* Ảnh nhỏ trong bảng */
+        .table-img {
+            width: 50px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
+
 <div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
 
 <main>
@@ -82,7 +121,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tiêu Đề</th>
+                    <th>Ảnh</th> <th>Tiêu Đề</th>
                     <th>Tác Giả</th>
                     <th>Danh Mục</th>
                     <th>Giá</th>
@@ -92,22 +131,31 @@
                 <tbody>
                 <tr th:each="p : ${allBooks}">
                     <td th:text="${p.id}">1</td>
+                    <td>
+                        <img th:src="@{/uploads/{imgName}(imgName=${p.image})}"
+                             class="table-img"
+                             onerror="this.src='/images/default-book.png';">
+                    </td>
                     <td th:text="${p.title}">Sách Lập trình</td>
                     <td th:text="${p.author}">Tác giả A</td>
                     <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}">Khoa học</td>
                     <td th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">200.000 đ</td>
                     <td>
-                        <a th:href="@{/books/edit/{id}(id=${p.id})}" class="action-btn edit-btn"><i class="fas fa-edit"></i> Sửa</a>
+                        <div class="action-buttons-cell">
+                            <a th:href="@{/books/edit/{id}(id=${p.id})}" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
 
-                        <a th:href="@{/books/delete/{id}(id=${p.id})}"
-                           class="action-btn delete-btn"
-                           onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm: ' + [[${p.title}]] + '?');">
-                            <i class="fas fa-trash"></i> Xóa
-                        </a>
+                            <a th:href="@{/books/delete/{id}(id=${p.id})}"
+                               class="action-btn delete-btn"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm: ' + [[${p.title}]] + '?');">
+                                <i class="fas fa-trash"></i> Xóa
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${allBooks == null or allBooks.isEmpty()}">
-                    <td colspan="6">Không có sản phẩm nào được tìm thấy.</td>
+                    <td colspan="7">Không có sản phẩm nào được tìm thấy.</td>
                 </tr>
                 </tbody>
             </table>

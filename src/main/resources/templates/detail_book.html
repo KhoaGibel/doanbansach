@@ -69,12 +69,13 @@
 
         <div class="book-info">
             <h1 th:text="${book.title}">Tên sách</h1>
+
             <p class="author">
                 Tác giả: <strong th:text="${book.author}">Tác giả</strong>
             </p>
 
             <div class="price">
-                <span th:text="${#numbers.formatInteger(book.price, 0, 'COMMA')} + ' ₫'">150.000 ₫</span>
+                <span th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">150.000 ₫</span>
             </div>
 
             <div class="description" th:text="${book.description}">
@@ -83,30 +84,25 @@
 
             <div class="actions">
                 <a th:href="@{/add-to-cart/{id}(id=${book.id})}" class="btn btn-add-cart">
-                    Thêm vào giỏ hàng
+                    <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
                 </a>
 
                 <div sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-edit">
-                        Sửa sách
-                    </a>
+                    <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-edit">Sửa sách</a>
                     <a th:href="@{/books/delete/{id}(id=${book.id})}"
                        class="btn btn-delete"
-                       onclick="return confirm('Bạn có chắc chắn muốn xóa sách này không?')">
-                        Xóa sách
-                    </a>
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa sách này không?')">Xóa sách</a>
                 </div>
 
-                <a th:href="@{/books}" class="btn btn-back">
-                    Quay lại danh sách
-                </a>
-                <a th:href="@{/}" class="btn btn-back">
-                    Trang chủ
-                </a>
+                <a th:href="@{/}" class="btn btn-back">Trang chủ</a>
             </div>
         </div>
     </div>
 
+    <div th:if="${book == null && error == null}" style="text-align:center;padding:100px;">
+        <h3>Không tìm thấy sách này.</h3>
+        <a th:href="@{/}" class="btn btn-back">Về trang chủ</a>
+    </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

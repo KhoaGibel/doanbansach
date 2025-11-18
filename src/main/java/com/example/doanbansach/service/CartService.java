@@ -14,10 +14,21 @@ public class CartService {
 
     private final Map<Long, Integer> cart = new HashMap<>();
 
-    // Thêm sách vào giỏ
+    // Thêm (hoặc tăng) số lượng
     public void add(Long bookId, int quantity) {
         if (bookId != null && quantity > 0) {
             cart.put(bookId, cart.getOrDefault(bookId, 0) + quantity);
+        }
+    }
+
+    // SỬA: Thêm hàm Update (SET số lượng)
+    public void update(Long bookId, int quantity) {
+        if (bookId != null) {
+            if (quantity > 0) {
+                cart.put(bookId, quantity); // Đặt lại số lượng
+            } else {
+                cart.remove(bookId); // Xóa nếu số lượng là 0
+            }
         }
     }
 

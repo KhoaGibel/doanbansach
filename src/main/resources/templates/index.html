@@ -38,7 +38,7 @@
 
                     <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
-                         th:onerror="this.src='/images/default-book.png';">
+                         th:onerror="'this.src=\'' + @{/images/default-book.png} + '\';'">
 
                     <h4 th:text="${product.title}">Tên sách</h4>
                     <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá bán</p>
@@ -58,7 +58,7 @@
 
                     <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
-                         th:onerror="this.src='/images/default-book.png';">
+                         th:onerror="'this.src=\'' + @{/images/default-book.png} + '\';'">
 
                     <h4 th:text="${product.title}">Tên sách</h4>
                     <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá bán</p>
@@ -68,8 +68,9 @@
     </section>
 
     <div class="action-buttons" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/admin}" style="margin-right: 15px;">Dashboard Admin</a>
         <a th:href="@{/admin/products}">Thêm Sách Mới</a>
-        <a th:href="@{/categories}" sec:authorize="hasRole('ADMIN')">Quản Lý Danh Mục</a>
+        <a th:href="@{/categories}">Quản Lý Danh Mục</a>
     </div>
 
 </div>
