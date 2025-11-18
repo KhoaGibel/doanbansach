@@ -101,7 +101,7 @@ public class BookServiceImpl implements BookService {
             Path copyLocation = Paths.get(uploadDir).resolve(fileName);
 
             Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-            existingBook.setImage("/images/uploads/" + fileName); // ĐÚNG 100%
+            existingBook.setImage(fileName); // ĐÚNG 100%
         }
         // Không đổi ảnh → giữ nguyên
 

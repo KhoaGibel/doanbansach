@@ -46,27 +46,25 @@
         .btn:hover { transform: translateY(-3px); }
         .error { background: #ffeaa7; color: #d63031; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 20px; }
         @media (max-width: 768px) {
-            .bookbook-detail { flex-direction: column; }
+            .book-detail { flex-direction: column; }
             .book-image img { height: 400px; }
         }
     </style>
 </head>
 <body>
 
-<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/header :: header-nav}"></div>
 
 <div class="container">
 
-    <!-- Thông báo lỗi -->
     <div th:if="${error != null}" class="error" th:text="${error}"></div>
 
-    <!-- Chi tiết sách -->
     <div th:if="${book != null}" class="book-detail">
 
         <div class="book-image">
-            <img th:src="${book.image != null && book.image.trim() != '' ? book.image : '/images/no-image.jpg'}"
-                 alt="Ảnh bìa sách"
-                 onerror="this.src='/images/no-image.jpg'">
+            <img th:src="@{/uploads/{imgName}(imgName=${book.image})}"
+                 th:alt="${book.title}"
+                 th:onerror="'this.src=\'' + @{/images/default-book.png} + '\';'">
         </div>
 
         <div class="book-info">
@@ -88,7 +86,6 @@
                     Thêm vào giỏ hàng
                 </a>
 
-                <!-- Nút admin - chỉ hiện nếu là ADMIN -->
                 <div sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-edit">
                         Sửa sách
@@ -110,13 +107,6 @@
         </div>
     </div>
 
-    <!-- Không tìm thấy sách HOẶC có lỗi -->
-    <div th:if="${book == null && error == null}"
-         style="text-align:center;padding:100px 20px;font-size:1.5em;color:#636e72;">
-        Không tìm thấy sách này.
-        <br><br>
-        <a th:href="@{/books}" style="color:#74b9ff;font-weight:bold;font-size:1.1em;">Quay lại danh sách sách</a>
-    </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

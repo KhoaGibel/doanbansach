@@ -38,7 +38,7 @@
 
                     <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
-                         onerror="this.src='/images/default-book.png';">
+                         th:onerror="this.src='/images/default-book.png';">
 
                     <h4 th:text="${product.title}">Tên sách</h4>
                     <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá bán</p>
@@ -58,7 +58,7 @@
 
                     <img th:src="@{/uploads/{imgName}(imgName=${product.image})}"
                          th:alt="${product.title}"
-                         onerror="this.src='/images/default-book.png';">
+                         th:onerror="this.src='/images/default-book.png';">
 
                     <h4 th:text="${product.title}">Tên sách</h4>
                     <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá bán</p>

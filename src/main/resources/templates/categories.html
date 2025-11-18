@@ -35,18 +35,32 @@
             color: white;
         }
 
-        /* Nút hành động */
+        /* === SỬA LỖI CSS NÚT BỊ VỠ === */
         .btn-action {
-            padding: 6px 10px;
-            margin: 0 5px;
+            display: inline-block; /* Đảm bảo nút nằm trên 1 hàng */
+            padding: 6px 12px;
+            margin: 0 4px; /* Thêm khoảng cách giữa các nút */
             text-decoration: none;
             border-radius: 4px;
             font-size: 0.9em;
+            color: white;
+            border: none;
+            cursor: pointer;
+            vertical-align: middle; /* Căn giữa các nút */
         }
-        .edit   { background-color: #007bff; color: white; }
+        .btn-action i {
+            margin-right: 5px; /* Khoảng cách icon và chữ */
+        }
+        .edit {
+            background-color: #007bff; /* Màu xanh Sửa */
+        }
         .edit:hover { background-color: #0056b3; }
-        .delete { background-color: #dc3545; color: white; }
+
+        .delete {
+            background-color: #dc3545; /* Màu đỏ Xóa */
+        }
         .delete:hover { background-color: #c82333; }
+        /* === KẾT THÚC SỬA LỖI CSS === */
 
         .btn-add {
             display: inline-block;
@@ -80,7 +94,7 @@
     </style>
 </head>
 <body>
-<div th:replace="~{fragments/header :: header-nav}"></div>
+<div th:replace="~{fragments/admin-nav :: adminHeader}"></div>
 <div class="container">
     <h2><i class="fas fa-list-alt"></i> Quản Lý Danh Mục</h2>
 
